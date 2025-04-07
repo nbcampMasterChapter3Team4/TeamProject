@@ -54,9 +54,9 @@
 		5B3EA88E2D9FD2F500971AB4 = {
 			isa = PBXGroup;
 			children = (
-				5B3EA8EA2D9FD30100971AB4 /* .gitignore */,
 				5B3EA8992D9FD2F500971AB4 /* TeamProject */,
 				5B3EA8982D9FD2F500971AB4 /* Products */,
+				5B3EA8EA2D9FD30100971AB4 /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
