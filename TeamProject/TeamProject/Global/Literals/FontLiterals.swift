@@ -78,6 +78,3 @@ extension UIFont {
         return .systemFont(ofSize: font.size, weight: font.weight)
     }
 }
-
-// titleLabel.font = .fontGuide(.mainItemTitle)
-
