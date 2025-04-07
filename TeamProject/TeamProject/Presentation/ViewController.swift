@@ -10,13 +10,13 @@ import UIKit
 import SnapKit
 import Then
 
-class ViewController: UIViewController {
+class ViewController: BaseViewController {
 
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = .red
     }
 
 
