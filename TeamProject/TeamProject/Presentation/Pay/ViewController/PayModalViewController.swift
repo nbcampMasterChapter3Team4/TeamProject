@@ -61,6 +61,8 @@ class PayModalViewController: BaseViewController {
         }
     }
     
+    // MARK: - Methods
+    
     func setAddTarget() {
         testView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
     }

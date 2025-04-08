@@ -66,7 +66,6 @@ class ShoppingItemView: BaseView {
             $0.left.top.bottom.equalToSuperview()
             $0.width.equalTo(SizeLiterals.Screen.screenWidth * 110 / 402)
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 99 / 874)
-            //874
         }
         
         itemTitleLabel.snp.makeConstraints {
@@ -96,6 +95,8 @@ class ShoppingItemView: BaseView {
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 30 / 874)
         }
     }
+    
+    // MARK: - Methods
     
     /// 초기 각각의 Title을 set하기 위한 configure
     func configure(_ image: UIImage, _ title: String, _ description: String, _ price: String, _ itemCount: Int) {
