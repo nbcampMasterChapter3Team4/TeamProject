@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+enum IECategory {
+    case iPhone
+    case mac
+    case iPad
+    case acc
+}
