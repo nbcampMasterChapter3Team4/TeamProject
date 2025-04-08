@@ -31,27 +31,15 @@ class ViewController: BaseViewController {
         $0.selectedSegmentIndex = 0
     }
     
-    private var collectionView: UICollectionView!
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     
     // MARK: - Properties
     
     private enum Section: Int, CaseIterable {
-        case bigOne, grid2
-        var columnCount: Int {
-            switch self {
-            case .bigOne:
-                return 1
-                
-            case .grid2:
-                return 2
-            }
-        }
+        case main
     }
     typealias Item = IEProduct
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-    
-    // Test data
-    
     
     override func setStyles() {
         self.view.backgroundColor = .systemBackground
@@ -81,13 +69,37 @@ class ViewController: BaseViewController {
 
 private extension ViewController {
     func setCollectionView() {
-        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: createLayout())
-        collectionView.backgroundColor = .systemTeal
+        collectionView.backgroundColor = .clear
         collectionView.delegate = self
         configureDataSource()
     }
     
     func configureDataSource() {
+        let bigProduct = IEProduct(
+            id: UUID(),
+            name: "iPhone16",
+            imageName: "iPhone16",
+            price: 1230000,
+            description: "테스트",
+            color: .blackTitanium,
+            category: .iPhone
+        )
+        
+        var testIEProduct = [IEProduct]()
+        for _ in 1...10 {
+            let gridProduct = IEProduct(
+                id: UUID(),
+                name: "iPhone15",
+                imageName: "iPhone15",
+                price: 4560000,
+                description: "테스트",
+                color: .desertTitanium,
+                category: .iPhone
+            )
+            testIEProduct.append(gridProduct)
+        }
+        
+        
         let cellRegistration = UICollectionView.CellRegistration<ItemCell, Item> { cell, indexPath, item in
             cell.configure()
         }
@@ -95,35 +107,31 @@ private extension ViewController {
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
         })
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(testIEProduct)
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            guard let section = Section(rawValue: sectionIndex) else { return nil }
-            let columns = section.columnCount
-            
-            return self.createSection(columns: columns)
+            return self.createSection()
         }
         
         return layout
     }
     
-    func createSection(columns: Int) -> NSCollectionLayoutSection {
+    func createSection() -> NSCollectionLayoutSection {
         let standardWidth: CGFloat = 402
         let space: CGFloat = 13
-        var itemWidth: CGFloat = 0
-        
-        if columns == 1 {
-            itemWidth = standardWidth - space * 2 / standardWidth
-        } else if columns == 2 {
-            itemWidth = (standardWidth - space * 3) / 2 / standardWidth
-        }
+        let itemWidth: CGFloat = (standardWidth - space * 3) / 2 / standardWidth
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(itemWidth), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(184 / 874))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 1)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
         group.interItemSpacing = NSCollectionLayoutSpacing.fixed(13)
         
         let section = NSCollectionLayoutSection(group: group)
