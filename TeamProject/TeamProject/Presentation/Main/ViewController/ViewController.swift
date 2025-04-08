@@ -29,6 +29,16 @@ class ViewController: BaseViewController {
         $0.insertSegment(withTitle: "iPad", at: 3, animated: true)
         $0.insertSegment(withTitle: "ACC", at: 4, animated: true)
         $0.selectedSegmentIndex = 0
+        
+        $0.setTitleTextAttributes(
+            [.foregroundColor:
+                UIColor { traitCollection in
+                    if traitCollection.userInterfaceStyle == .light {
+                        return UIColor.black100
+                    } else {
+                        return UIColor.white200
+                    }
+                }], for: .normal)
     }
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -39,11 +49,13 @@ class ViewController: BaseViewController {
     
     // MARK: - Properties
     
-    private enum Section: Int, CaseIterable {
+    private enum Section {
         case main
     }
     typealias Item = IEProduct
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +63,13 @@ class ViewController: BaseViewController {
     }
     
     override func setStyles() {
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return UIColor.white200
+            } else {
+                return UIColor.black100
+            }
+        }
         self.navigationController?.navigationBar.isHidden = true;
         
         setCollectionView()
@@ -68,7 +86,7 @@ class ViewController: BaseViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(segmentedControl.snp.bottom).offset(27)
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(bottomButtonView.snp.top).offset(-83)
+            $0.height.equalTo(SizeLiterals.Screen.screenHeight * 578 / 874)
         }
         
         bottomButtonView.snp.makeConstraints {
@@ -101,6 +119,7 @@ class ViewController: BaseViewController {
 private extension ViewController {
     func setCollectionView() {
         collectionView.backgroundColor = .clear
+        collectionView.alwaysBounceVertical = false
         collectionView.delegate = self
         configureDataSource()
     }
@@ -109,7 +128,7 @@ private extension ViewController {
         // 테스트
         let bigProduct = IEProduct(
             id: UUID(),
-            name: "iPhone16",
+            name: "iPhone 16",
             imageName: "iPhone16",
             price: 1230000,
             description: "테스트",
@@ -120,7 +139,7 @@ private extension ViewController {
         for _ in 1...10 {
             let gridProduct = IEProduct(
                 id: UUID(),
-                name: "iPhone15",
+                name: "iPhone 15",
                 imageName: "iPhone15",
                 price: 4560000,
                 description: "테스트",
@@ -130,8 +149,8 @@ private extension ViewController {
             testIEProduct.append(gridProduct)
         }
         
-        let cellRegistration = UICollectionView.CellRegistration<ItemCell, Item> { cell, indexPath, item in
-            cell.configure()
+        let cellRegistration = UICollectionView.CellRegistration<MiniItemCell, Item> { cell, indexPath, item in
+            cell.configure(title: item.name, image: ImageLiterals.Main.iPhone16Pro, price: item.price)
         }
         
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
@@ -145,21 +164,22 @@ private extension ViewController {
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
+        let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
+        let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
+        
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
+        item.contentInsets = horizontalInsets
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.33))
         let firstGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
         let secondGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        let thirdGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        firstGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
-        secondGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
-        thirdGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
+        firstGroup.contentInsets = verticalInsets
+        secondGroup.contentInsets = verticalInsets
         
         let nestedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstGroup, secondGroup, thirdGroup])
-        nestedGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
+        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstGroup, secondGroup])
+        nestedGroup.contentInsets = horizontalInsets
         
         let section = NSCollectionLayoutSection(group: nestedGroup)
         section.orthogonalScrollingBehavior = .groupPagingCentered
