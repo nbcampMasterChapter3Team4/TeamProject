@@ -13,6 +13,6 @@ struct IEProduct: Hashable {
     var imageName: String
     var price: Int
     var description: String
-    var color: IEColor
+    var colors: [IEColor]
     var category: IECategory
 }
