@@ -38,14 +38,14 @@ extension FontLiterals {
             
         case .mainItemTitle: return 15
         case .mainItemPrice: return 8
-        case .mainMiniItemTitle: return 8
-        case .mainMiniItemPrice: return 6
+        case .mainMiniItemTitle: return 10
+        case .mainMiniItemPrice: return 8
         case .mainExpectationPriceTitle,
              .mainExpectationPriceValue,
              .mainCartOrPay: return 16
             
-        case .detailModalItemTitle: return 15
-        case .detailModalItemPrice: return 10
+        case .detailModalItemTitle: return 18
+        case .detailModalItemPrice: return 13
             
         case .payModalItemTitle: return 20
         case .payModalItemDesc: return 14
@@ -57,6 +57,8 @@ extension FontLiterals {
         case .new: return .semibold
             
         case .mainItemTitle,
+             .mainMiniItemTitle,
+             .mainMiniItemPrice,
              .mainExpectationPriceTitle,
              .mainExpectationPriceValue,
              .mainCartOrPay,
@@ -65,9 +67,7 @@ extension FontLiterals {
         case .mainItemPrice,
              .detailModalItemPrice: return .semibold
             
-        case .mainMiniItemTitle,
-             .mainMiniItemPrice,
-             .payModalItemTitle,
+        case .payModalItemTitle,
              .payModalItemDesc: return .regular
         }
     }
