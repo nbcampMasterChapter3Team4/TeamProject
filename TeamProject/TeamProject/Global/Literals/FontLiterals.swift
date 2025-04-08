@@ -28,6 +28,7 @@ enum FontLiterals {
     // MARK: - PayModal
     case payModalItemTitle
     case payModalItemDesc
+    case payModalDeleteLabel
 }
 
 extension FontLiterals {
@@ -49,6 +50,7 @@ extension FontLiterals {
             
         case .payModalItemTitle: return 20
         case .payModalItemDesc: return 14
+        case .payModalDeleteLabel: return 10
         }
     }
     
@@ -65,7 +67,8 @@ extension FontLiterals {
              .detailModalItemTitle: return .bold
             
         case .mainItemPrice,
-             .detailModalItemPrice: return .semibold
+             .detailModalItemPrice,
+             .payModalDeleteLabel: return .semibold
             
         case .payModalItemTitle,
              .payModalItemDesc: return .regular
