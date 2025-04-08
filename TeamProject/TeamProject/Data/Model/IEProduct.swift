@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct IEProduct {
+struct IEProduct: Hashable {
     let id: UUID
     let name: String
     var imageName: String
