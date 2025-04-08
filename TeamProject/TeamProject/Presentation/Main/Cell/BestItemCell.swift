@@ -1,5 +1,5 @@
 //
-//  MiniItemCell.swift
+//  BestItemCell.swift
 //  TeamProject
 //
 //  Created by 서동환 on 4/8/25.
@@ -7,11 +7,18 @@
 
 import UIKit
 
-class MiniItemCell: UICollectionViewCell {
+class BestItemCell: UICollectionViewCell {
+    static let reuseIdentifier = "BestItemCell"
     
-    // MARK: - UI Component
+    // MARK: - UI Components
     
-    private let miniItemTitleLabel = UILabel().then {
+    private let bestTitleLabel = UILabel().then {
+        $0.text = "NEW"
+        $0.textColor = .red300
+        $0.font = .fontGuide(.new)
+    }
+    
+    private let bestItemTitleLabel = UILabel().then {
         $0.text = "iPhone 16 Pro"
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
@@ -20,17 +27,17 @@ class MiniItemCell: UICollectionViewCell {
                 return UIColor.white200
             }
         }
-        $0.font = .fontGuide(.mainMiniItemTitle)
+        $0.font = .fontGuide(.mainItemTitle)
     }
     
-    private let miniItemImageView = UIImageView().then {
+    private let bestItemImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.backgroundColor = .clear
         $0.layer.cornerRadius = 10
     }
     
-    private let miniItemPriceLabel = UILabel().then {
-        $0.text = "₩1,550,000부터"
+    private let bestItemPriceLabel = UILabel().then {
+        $0.text = "₩1,550,000부터 "
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
                 return UIColor.gray400
@@ -38,7 +45,7 @@ class MiniItemCell: UICollectionViewCell {
                 return UIColor.blue200
             }
         }
-        $0.font = .fontGuide(.mainMiniItemPrice)
+        $0.font = .fontGuide(.mainItemPrice)
     }
     
     // MARK: - Initializer
@@ -65,27 +72,32 @@ class MiniItemCell: UICollectionViewCell {
     }
     
     private func setLayout() {
-        self.addSubviews(miniItemTitleLabel, miniItemImageView, miniItemPriceLabel)
+        self.addSubviews(bestTitleLabel, bestItemTitleLabel, bestItemImageView, bestItemPriceLabel)
         
         let screenWidth = SizeLiterals.Screen.screenWidth
         let screenHeight = SizeLiterals.Screen.screenHeight
         let isSmallDevice = min(screenWidth, screenHeight) <= 375
         
-        miniItemTitleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(10)
+        bestTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(15)
+            $0.leading.equalToSuperview().inset(15)
         }
         
-        miniItemImageView.snp.makeConstraints {
-            $0.top.equalTo(miniItemTitleLabel.snp.bottom).offset(isSmallDevice ? 2 : 5)
-            $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
-            $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
-            $0.centerX.equalToSuperview()
+        bestItemTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(bestTitleLabel.snp.bottom).offset(2)
+            $0.leading.equalTo(bestTitleLabel)
         }
         
-        miniItemPriceLabel.snp.makeConstraints {
-            $0.leading.equalTo(miniItemTitleLabel)
-            $0.bottom.equalToSuperview().inset(10)
+        bestItemImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(15)
+            $0.trailing.equalToSuperview().inset(10)
+            $0.width.equalTo(bestItemImageView.snp.height).multipliedBy(1)
+            $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.75 : 0.8)
+        }
+        
+        bestItemPriceLabel.snp.makeConstraints {
+            $0.leading.equalTo(bestTitleLabel)
+            $0.bottom.equalToSuperview().inset(15)
         }
     }
     
@@ -96,8 +108,8 @@ class MiniItemCell: UICollectionViewCell {
         numberFormatter.numberStyle = .decimal
         let priceStr = numberFormatter.string(for: price) ?? "1,550,000"
         
-        miniItemTitleLabel.text = title
-        miniItemImageView.image = image
-        miniItemPriceLabel.text = "₩\(priceStr)부터"
+        bestItemTitleLabel.text = title
+        bestItemImageView.image = image
+        bestItemPriceLabel.text = "₩\(priceStr)부터"
     }
 }

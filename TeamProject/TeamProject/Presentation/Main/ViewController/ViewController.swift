@@ -49,8 +49,9 @@ class ViewController: BaseViewController {
     
     // MARK: - Properties
     
-    private enum Section {
-        case main
+    enum Section: Int, CaseIterable {
+        case firstPage
+        case otherPage
     }
     typealias Item = IEProduct
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
@@ -95,6 +96,8 @@ class ViewController: BaseViewController {
         }
     }
     
+    // MARK: - Methods
+    
     func setAddTarget() {
         bottomButtonView.getRightButton().addTarget(self, action: #selector(presentToPayViewController), for: .touchUpInside)
     }
@@ -119,29 +122,22 @@ class ViewController: BaseViewController {
 private extension ViewController {
     func setCollectionView() {
         collectionView.backgroundColor = .clear
-        collectionView.alwaysBounceVertical = false
+//        collectionView.alwaysBounceVertical = false
         collectionView.delegate = self
+        collectionView.isPagingEnabled = true
+        collectionView.showsHorizontalScrollIndicator = false
         configureDataSource()
     }
     
     func configureDataSource() {
-        // 테스트
-        let bigProduct = IEProduct(
-            id: UUID(),
-            name: "iPhone 16",
-            imageName: "iPhone16",
-            price: 1230000,
-            description: "테스트",
-            color: .blackTitanium,
-            category: .iPhone
-        )
+        // 테스트 코드
         var testIEProduct = [IEProduct]()
-        for _ in 1...10 {
+        for i in 1...17 {
             let gridProduct = IEProduct(
                 id: UUID(),
-                name: "iPhone 15",
-                imageName: "iPhone15",
-                price: 4560000,
+                name: "iPhone 16 Pro",
+                imageName: "iPhone16Pro",
+                price: 500_000 * i,
                 description: "테스트",
                 color: .desertTitanium,
                 category: .iPhone
@@ -149,48 +145,98 @@ private extension ViewController {
             testIEProduct.append(gridProduct)
         }
         
-        let cellRegistration = UICollectionView.CellRegistration<MiniItemCell, Item> { cell, indexPath, item in
-            cell.configure(title: item.name, image: ImageLiterals.Main.iPhone16Pro, price: item.price)
+        let bestCellRegistation = UICollectionView.CellRegistration<BestItemCell, Item> { cell, indexPath, item in
+            cell.configure(title: item.name, image: ImageLiterals.Main.iPhone15, price: item.price)  // 이미지는 테스트용
+        }
+        
+        let itemCellRegistration = UICollectionView.CellRegistration<MiniItemCell, Item> { cell, indexPath, item in
+            cell.configure(title: item.name, image: ImageLiterals.Main.iPhone16Pro, price: item.price)  // 이미지는 테스트용
         }
         
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
+            if indexPath.section == 0, indexPath.item == 0 {
+                return collectionView.dequeueConfiguredReusableCell(using: bestCellRegistation, for: indexPath, item: item)
+            } else {
+                return collectionView.dequeueConfiguredReusableCell(using: itemCellRegistration, for: indexPath, item: item)
+            }
         })
         
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(testIEProduct)
-        dataSource.applySnapshotUsingReloadData(snapshot)
+        snapshot.appendSections([.firstPage, .otherPage])
+        
+        let firstPageItems = Array(testIEProduct.prefix(5))
+        let otherPageItems = Array(testIEProduct.dropFirst(5))
+        snapshot.appendItems(firstPageItems, toSection: .firstPage)
+        snapshot.appendItems(otherPageItems, toSection: .otherPage)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
+        let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnv in
+            guard let page = Section(rawValue: sectionIndex) else { return nil }
+            return self.createSection(page: page)
+        }
+        
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        config.scrollDirection = .horizontal
+        layout.configuration = config
+        
+        return layout
+    }
+    
+    func createSection(page: Section) -> NSCollectionLayoutSection {
         let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
         let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
         
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = horizontalInsets
+        let fullWidthitemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        let twoColumnitemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.5),
+            heightDimension: .fractionalHeight(1.0)
+        )
+        let fullWidthitem = NSCollectionLayoutItem(layoutSize: fullWidthitemSize)
+        let twoColumnitem = NSCollectionLayoutItem(layoutSize: twoColumnitemSize)
+        fullWidthitem.contentInsets = horizontalInsets
+        twoColumnitem.contentInsets = horizontalInsets
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.33))
-        let firstGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        let secondGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        firstGroup.contentInsets = verticalInsets
-        secondGroup.contentInsets = verticalInsets
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1 / 3)
+        )
+        let firstRow: NSCollectionLayoutGroup
+        if page == .firstPage {
+            firstRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: fullWidthitem, count: 1)
+        } else {
+            firstRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: twoColumnitem, count: 2)
+        }
+        let secondRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: twoColumnitem, count: 2)
+        let thirdRow = secondRow
+        firstRow.contentInsets = verticalInsets
+        secondRow.contentInsets = verticalInsets
+        thirdRow.contentInsets = verticalInsets
         
-        let nestedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstGroup, secondGroup])
+        let nestedGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstRow, secondRow, thirdRow])
         nestedGroup.contentInsets = horizontalInsets
         
         let section = NSCollectionLayoutSection(group: nestedGroup)
-        section.orthogonalScrollingBehavior = .groupPagingCentered
-
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        return layout
+        section.visibleItemsInvalidationHandler = { (item, offset, env) in
+            let index = Int((offset.x / env.container.contentSize.width).rounded(.up))
+            print(">>> \(index)")
+        }
+        
+        return section
     }
 }
 
 // MARK: - UICollectionViewDelegate
 
 extension ViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("\(indexPath) cell pressed.")
+    }
 }
