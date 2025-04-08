@@ -16,3 +16,9 @@ struct IEProduct: Hashable {
     var colors: [IEColor]
     var category: IECategory
 }
+
+extension IEProduct {
+    var primaryColor: IEColor {
+        colors.first ?? .silver
+    }
+}

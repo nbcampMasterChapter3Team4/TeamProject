@@ -14,16 +14,32 @@ let mockUpData: IEProduct = IEProduct(
 )
 
 class DetailModalView: UIView {
+    var detailData: IEProduct? {
+        didSet {
+            updateUI()
+        }
+    }
+
+    var selectedColor: IEColor? {
+        didSet {
+            updateUI()
+        }
+    }
 
     // MARK: - UI Components
 
     private lazy var viewName = self.className
-    private let detailImageView = DetailImageView()
+    private var detailImageView = DetailImageView()
+
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setLayout()
         setStyles()
+
+        // TODO: - 메인뷰컨에서 불러와야 함
+
+        updateContent(with: mockUpData)
     }
 
     override func removeFromSuperview() {
@@ -51,5 +67,19 @@ class DetailModalView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func detailImage(for product: IEProduct) -> String {
+        let imageName = "\(product.imageName)_\(selectedColor?.rawValue ?? "Silver")"
+        return imageName
+    }
+
+    func updateContent(with product: IEProduct) {
+        self.detailData = product
+    }
+
+    private func updateUI() {
+        guard let product = detailData else { return }
+        detailImageView.updateContent(with: detailImage(for: product))
     }
 }

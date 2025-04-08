@@ -10,10 +10,9 @@ class DetailImageView: UIView {
     // MARK: - UI Components
 
     private let productImageView = UIImageView().then {
-        $0.image = ImageLiterals.Detail.macBookAir_Silver
+        //$0.image = ImageLiterals.Detail.macBookAir_Silver
         $0.contentMode = .scaleAspectFit
     }
-
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,6 +30,7 @@ class DetailImageView: UIView {
         backgroundColor = .gray100
         self.layer.cornerRadius = 10
     }
+    
     /// View 의 Layout 을 set 합니다.
     func setLayout() {
         addSubviews(productImageView)
@@ -45,5 +45,9 @@ class DetailImageView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func updateContent(with imageName: String) {
+        self.productImageView.image = UIImage(named: imageName)
     }
 }
