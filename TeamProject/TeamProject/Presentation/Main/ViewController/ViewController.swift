@@ -33,6 +33,10 @@ class ViewController: BaseViewController {
     
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     
+    private let bottomButtonView = CustomBottomButton().then {
+        $0.configure("₩190,000", "결제하기")
+    }
+    
     // MARK: - Properties
     
     private enum Section: Int, CaseIterable {
@@ -40,6 +44,11 @@ class ViewController: BaseViewController {
     }
     typealias Item = IEProduct
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setAddTarget()
+    }
     
     override func setStyles() {
         self.view.backgroundColor = .systemBackground
@@ -49,8 +58,7 @@ class ViewController: BaseViewController {
     }
     
     override func setLayout() {
-        self.view.addSubview(segmentedControl)
-        self.view.addSubview(collectionView)
+        self.view.addSubviews(segmentedControl, collectionView, bottomButtonView)
         
         segmentedControl.snp.makeConstraints {
             $0.top.equalTo(self.view.safeAreaLayoutGuide).inset(10)
@@ -60,8 +68,31 @@ class ViewController: BaseViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(segmentedControl.snp.bottom).offset(27)
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(134)  // 임시 레이아웃
+            $0.bottom.equalTo(bottomButtonView.snp.top).offset(-83)
         }
+        
+        bottomButtonView.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
+    }
+    
+    func setAddTarget() {
+        bottomButtonView.getRightButton().addTarget(self, action: #selector(presentToPayViewController), for: .touchUpInside)
+    }
+    
+    @objc
+    func presentToPayViewController() {
+        let vc = PayModalViewController()
+        
+        if let sheet = vc.sheetPresentationController {
+            sheet.detents = [.custom(resolver: { context in
+                return context.maximumDetentValue * 0.8445
+            })]
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+        }
+        present(vc, animated: true, completion: nil)
     }
 }
 
@@ -75,6 +106,7 @@ private extension ViewController {
     }
     
     func configureDataSource() {
+        // 테스트
         let bigProduct = IEProduct(
             id: UUID(),
             name: "iPhone16",
@@ -84,7 +116,6 @@ private extension ViewController {
             color: .blackTitanium,
             category: .iPhone
         )
-        
         var testIEProduct = [IEProduct]()
         for _ in 1...10 {
             let gridProduct = IEProduct(
@@ -98,7 +129,6 @@ private extension ViewController {
             )
             testIEProduct.append(gridProduct)
         }
-        
         
         let cellRegistration = UICollectionView.CellRegistration<ItemCell, Item> { cell, indexPath, item in
             cell.configure()
@@ -115,26 +145,26 @@ private extension ViewController {
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.3))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
-        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 3)
-        let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 3)
-        leadingGroup.interItemSpacing = .fixed(13)
-        trailingGroup.interItemSpacing = .fixed(13)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.33))
+        let firstGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
+        let secondGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
+        let thirdGroup = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
+        firstGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
+        secondGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
+        thirdGroup.contentInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
         
         let nestedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let nestedGroup = NSCollectionLayoutGroup.horizontal(layoutSize: nestedGroupSize, subitems: [leadingGroup, trailingGroup])
-        nestedGroup.interItemSpacing = .fixed(13)
-        nestedGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 13, bottom: 0, trailing: 13)
+        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstGroup, secondGroup, thirdGroup])
+        nestedGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
         
         let section = NSCollectionLayoutSection(group: nestedGroup)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 13, bottom: 0, trailing: 13)
         section.orthogonalScrollingBehavior = .groupPagingCentered
 
         let layout = UICollectionViewCompositionalLayout(section: section)
-    
         return layout
     }
 }
