@@ -75,11 +75,25 @@ class ViewController: BaseViewController {
             $0.top.equalTo(segmentedControl.snp.bottom).offset(28)
             $0.centerX.equalTo(self.view.safeAreaLayoutGuide)
         }
+        demoButton.addTarget(self, action: #selector(showDetailModal), for: .touchUpInside)
 
 //        collectionView.snp.makeConstraints {
 //            $0.top.equalTo(segmentedControl.snp.bottom).offset(28)
 //            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(12)
 //        }
+    }
+
+    @objc private func showDetailModal() {
+        let detailModalVC = DetailModalViewController()
+        if let sheet = detailModalVC.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    return context.maximumDetentValue * 0.72
+                }
+            ]
+            sheet.prefersGrabberVisible = true
+        }
+        self.present(detailModalVC, animated: true)
     }
 }
 

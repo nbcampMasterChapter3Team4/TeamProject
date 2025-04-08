@@ -18,7 +18,9 @@ class DetailModalView: UIView {
     }
 
     /// View 의 Layout 을 set 합니다.
-    func setLayout() {}
+    func setLayout() {
+        self.backgroundColor = .white
+    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
