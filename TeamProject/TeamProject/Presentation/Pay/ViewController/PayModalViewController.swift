@@ -12,6 +12,7 @@ import Then
 
 class PayModalViewController: BaseViewController {
     
+    // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
     private let popButton = UIButton().then {
