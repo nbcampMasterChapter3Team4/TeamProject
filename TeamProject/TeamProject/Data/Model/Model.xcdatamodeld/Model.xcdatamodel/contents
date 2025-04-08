@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24E248" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="IECart" representedClassName=".IECart" syncable="YES" codeGenerationType="class">
+        <attribute name="cartQuantity" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="product" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="selectedColor" optional="YES" attributeType="String"/>
+    </entity>
+</model>
