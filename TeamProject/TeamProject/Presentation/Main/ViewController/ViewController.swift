@@ -59,7 +59,7 @@ class ViewController: BaseViewController {
         
         collectionView.snp.makeConstraints {
             $0.top.equalTo(segmentedControl.snp.bottom).offset(27)
-            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(13)
+            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             $0.bottom.equalTo(self.view.safeAreaLayoutGuide).inset(134)  // 임시 레이아웃
         }
     }
@@ -115,30 +115,27 @@ private extension ViewController {
     }
     
     func createLayout() -> UICollectionViewCompositionalLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            return self.createSection()
-        }
-        
-        return layout
-    }
-    
-    func createSection() -> NSCollectionLayoutSection {
-        let standardWidth: CGFloat = 402
-        let space: CGFloat = 13
-        let itemWidth: CGFloat = (standardWidth - space * 3) / 2 / standardWidth
-        
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(itemWidth), heightDimension: .fractionalHeight(1.0))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.3))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(184 / 874))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        group.interItemSpacing = NSCollectionLayoutSpacing.fixed(13)
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
+        let leadingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 3)
+        let trailingGroup = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 3)
+        leadingGroup.interItemSpacing = .fixed(13)
+        trailingGroup.interItemSpacing = .fixed(13)
         
-        let section = NSCollectionLayoutSection(group: group)
+        let nestedGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let nestedGroup = NSCollectionLayoutGroup.horizontal(layoutSize: nestedGroupSize, subitems: [leadingGroup, trailingGroup])
+        nestedGroup.interItemSpacing = .fixed(13)
+        nestedGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 13, bottom: 0, trailing: 13)
+        
+        let section = NSCollectionLayoutSection(group: nestedGroup)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 13, bottom: 0, trailing: 13)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        section.interGroupSpacing = 26
 
-        return section
+        let layout = UICollectionViewCompositionalLayout(section: section)
+    
+        return layout
     }
 }
 
