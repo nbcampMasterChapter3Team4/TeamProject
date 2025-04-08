@@ -1,0 +1,18 @@
+//
+//  IEProduct.swift
+//  TeamProject
+//
+//  Created by 서동환 on 4/8/25.
+//
+
+import Foundation
+
+struct IEProduct {
+    let id: UUID
+    let name: String
+    var imageName: String
+    var price: Int
+    var description: String
+    var color: IEColor
+    var category: IECategory
+}
