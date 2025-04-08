@@ -36,6 +36,7 @@ class ViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
+        self.navigationController?.navigationBar.isHidden = true;
     }
     
     override func setLayout() {
