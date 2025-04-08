@@ -12,6 +12,12 @@ import Then
 
 class PayModalViewController: BaseViewController {
     
+
+    private let deleteButton = DeleteButton()
+    private let popButton = UIButton().then {
+        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
+    }
+    
     private let bottomButtonView = CustomBottomButton()
     
     override func viewDidLoad() {
@@ -24,7 +30,20 @@ class PayModalViewController: BaseViewController {
     }
     
     override func setLayout() {
-        view.addSubviews(bottomButtonView)
+        view.addSubviews(deleteButton, popButton, bottomButtonView)
+        
+        deleteButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(50)
+            $0.leading.equalToSuperview().offset(18)
+            $0.height.equalTo(SizeLiterals.Screen.screenHeight * 25 / 874)
+            $0.width.equalTo(SizeLiterals.Screen.screenWidth * 68 / 402)
+        }
+        
+        popButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.height.width.equalTo(SizeLiterals.Screen.screenHeight * 30 / 874)
+        }
         
         bottomButtonView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
