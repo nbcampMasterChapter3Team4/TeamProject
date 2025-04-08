@@ -8,7 +8,7 @@
 import UIKit
 
 enum IEColor: String {
-    case skyBlue = "Sky Blue"
+    case skyBlue = "SkyBlue"
     case silver = "Silver"
     case starlight = "Starlight"
     case midnight = "Midnight"
