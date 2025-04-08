@@ -24,6 +24,8 @@ class BaseView: UIView {
         print("🧵 \(viewName) has been successfully Removed")
     }
     
+    /// View 의 Style 을 set 합니다.
+    func setStyles() {}
     /// View 의 Layout 을 set 합니다.
     func setLayout() {}
     
