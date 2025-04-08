@@ -30,7 +30,6 @@ extension UIColor {
     static var blue200: UIColor { UIColor(hex: "#1974F9") }      // blue 200
     
     // MARK: - Detail Color
-    
     static var skyBlue000: UIColor { UIColor(hex: "#C8D9E0") }
     static var silver000: UIColor { UIColor(hex: "#E3E4E6") }
     static var starlight000: UIColor { UIColor(hex: "#F0E5D2") }
