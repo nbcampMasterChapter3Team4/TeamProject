@@ -3,7 +3,7 @@
     <entity name="IECart" representedClassName=".IECart" syncable="YES" codeGenerationType="class">
         <attribute name="cartQuantity" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="product" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="productID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="selectedColor" optional="YES" attributeType="String"/>
     </entity>
 </model>

@@ -23,17 +23,18 @@ final class CoreDataManager {
         return appDelegate.persistentContainer.viewContext
     }()
     
-    static func saveData(_ product: IECart) {
+    /// IECartModel을 매개변수로 받아 IECart로 변환 후 CoreData에 저장합니다.
+    static func saveData(_ ieCartModel: IECartModel) {
         guard let context = context else { return }
         guard let entity = NSEntityDescription.entity(
             forEntityName: "IECart", in: context
         ) else { return }
         
         let object = IECart(entity: entity, insertInto: context)
-        object.id = product.id
-        object.product = product.product
-        object.selectedColor = product.selectedColor
-        object.cartQuantity = product.cartQuantity
+        object.id = ieCartModel.id
+        object.productID = ieCartModel.productID
+        object.selectedColor = ieCartModel.selectedColor.rawValue
+        object.cartQuantity = Int64(ieCartModel.cartQuantity)
         
         do {
             try context.save()
@@ -43,7 +44,8 @@ final class CoreDataManager {
         }
     }
     
-    static func fetchData() -> [IECart] {
+    /// Core Data에 저장되어있는 IECart 데이터들을 IECartModel 배열로 변환 후 반환합니다.
+    static func fetchData() -> [IECartModel] {
         guard let context = context else { return [] }
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "IECart")
         
@@ -52,7 +54,22 @@ final class CoreDataManager {
                 return []
             }
             
-            return ieCartList
+            var ieCartModelList = [IECartModel]()
+            for ieCart in ieCartList {
+                guard let id = ieCart.id,
+                      let productID = ieCart.productID,
+                      let selectedColorStr = ieCart.selectedColor,
+                      let selectedColor = IEColor(rawValue: selectedColorStr) else { continue }
+                
+                let data = IECartModel(
+                    id: id,
+                    productID: productID,
+                    selectedColor: selectedColor,
+                    cartQuantity: Int(ieCart.cartQuantity)
+                )
+                ieCartModelList.append(data)
+            }
+            return ieCartModelList
             
         } catch {
             let msg = error.localizedDescription
@@ -61,19 +78,15 @@ final class CoreDataManager {
         }
     }
     
-    static func updateData(_ product: IECart) {
+    /// IECartModel을 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터를 수정합니다.
+    static func updateData(_ ieCartModel: IECartModel) {
         guard let context = context else { return }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
-        guard let idStr = product.id?.uuidString else { return }
-        fetchRequest.predicate = NSPredicate(format: "id = %@", idStr)
         
         do {
-            guard let result = try? context.fetch(fetchRequest),
-                  let object = result.first as? IECart else { return }
-            
-            object.selectedColor = product.selectedColor
-            object.cartQuantity = product.cartQuantity
-            
+            if let object = fetchEntity(id: ieCartModel.id) {
+                object.selectedColor = ieCartModel.selectedColor.rawValue
+                object.cartQuantity = Int64(ieCartModel.cartQuantity)
+            }
             try context.save()
             
         } catch {
@@ -82,22 +95,36 @@ final class CoreDataManager {
         }
     }
     
-    static func deleteData(uuid: UUID) {
+    /// UUID를 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터를 삭제합니다.
+    static func deleteData(id: UUID) {
         guard let context = context else { return }
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
-        fetchRequest.predicate = NSPredicate(format: "id = %@", uuid.uuidString)
         
         do {
-            guard let result = try? context.fetch(fetchRequest),
-                  let object = result.first as? IECart else { return }
-            
-            context.delete(object)
-            
-            try context.save()
+            if let object = fetchEntity(id: id) {
+                context.delete(object)
+                try context.save()
+            }
             
         } catch {
             let msg = error.localizedDescription
             os_log("error: %@", log: log, type: .error, msg)
+        }
+    }
+    
+    static func fetchEntity(id: UUID) -> IECart? {
+        guard let context = context else { return nil }
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
+        fetchRequest.predicate = NSPredicate(format: "id = %@", id.uuidString)
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            return result.first as? IECart
+            
+        } catch {
+            let msg = error.localizedDescription
+            os_log("error: %@", log: log, type: .error, msg)
+            
+            return nil
         }
     }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MiniItemCell: UICollectionViewCell {
+class MiniItemCell: BaseCollectionViewCell {
     
     // MARK: - UI Component
     
@@ -15,12 +15,13 @@ class MiniItemCell: UICollectionViewCell {
         $0.text = "iPhone 16 Pro"
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.black100
+                return .black100
             } else {
-                return UIColor.white200
+                return .white200
             }
         }
         $0.font = .fontGuide(.mainMiniItemTitle)
+        // TODO: - 라벨 줄 수 조정 및 Trailing 잡기
     }
     
     private let miniItemImageView = UIImageView().then {
@@ -33,42 +34,17 @@ class MiniItemCell: UICollectionViewCell {
         $0.text = "₩1,550,000부터"
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.gray400
+                return .gray400
             } else {
-                return UIColor.blue200
+                return .blue200
             }
         }
         $0.font = .fontGuide(.mainMiniItemPrice)
     }
     
-    // MARK: - Initializer
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setStyles()
-        setLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Style Helper
-    
-    private func setStyles() {
-        self.layer.cornerRadius = 10
-        self.backgroundColor = UIColor { traitCollection in
-            if traitCollection.userInterfaceStyle == .light {
-                return UIColor.gray100
-            } else {
-                return UIColor.gray700
-            }
-        }
-    }
-    
     // MARK: - Layout Helper
     
-    private func setLayout() {
+    override func setLayout() {
         self.addSubviews(miniItemTitleLabel, miniItemImageView, miniItemPriceLabel)
 
         miniItemTitleLabel.snp.makeConstraints {

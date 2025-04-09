@@ -17,9 +17,9 @@ class ViewController: BaseViewController {
     private let segmentedControl = UISegmentedControl().then {
         $0.backgroundColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.gray80
+                return .gray80
             } else {
-                return UIColor.gray600
+                return .gray600
             }
         }
         
@@ -34,9 +34,9 @@ class ViewController: BaseViewController {
             [.foregroundColor:
                 UIColor { traitCollection in
                     if traitCollection.userInterfaceStyle == .light {
-                        return UIColor.black100
+                        return .black100
                     } else {
-                        return UIColor.white200
+                        return .white200
                     }
                 }], for: .normal)
     }
@@ -51,6 +51,9 @@ class ViewController: BaseViewController {
     
     /// 테스트 용도
     private var testIEProduct = [IECategory: [IEProduct]]()
+    private var testCartData = [IEProduct]()
+    
+    private var cartModelList = [IECartModel]()
     
     // MARK: - Lifecycle
     
@@ -60,6 +63,10 @@ class ViewController: BaseViewController {
         
         makeTestData()
         productCollectionPageView.setData(products: combineAllProduct(), animated: true)
+        
+        // Core Data 테스트
+//        makeTestCartData()
+        fetchCartData()
     }
     
     // MARK: - Style Helper
@@ -67,9 +74,9 @@ class ViewController: BaseViewController {
     override func setStyles() {
         self.view.backgroundColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.white200
+                return .white200
             } else {
-                return UIColor.black100
+                return .black100
             }
         }
         self.navigationController?.navigationBar.isHidden = true;
@@ -104,70 +111,93 @@ class ViewController: BaseViewController {
         bottomButtonView.getRightButton().addTarget(self, action: #selector(presentToPayViewController), for: .touchUpInside)
     }
     
+    // MARK: - Test Methods
+    
     /// 테스트 데이터 생성
     private func makeTestData() {
-        for i in 1...10 {
-            let product = IEProduct(
+        for _ in 1...10 {
+            let iPhone = IEProduct(
                 id: UUID(),
                 name: "iPhone 16 Pro",
                 imageName: "iPhone16Pro",
-                price: 500_000 * i,
-                description: "테스트",
+                price: 1_550_000,
+                description: "궁극의 iPhone.",
                 color: .desertTitanium,
                 category: .iPhone
             )
-            testIEProduct[.iPhone, default: []].append(product)
+            testIEProduct[.iPhone, default: []].append(iPhone)
         }
-        
-        for i in 1...12 {
-            let product = IEProduct(
+        for _ in 1...12 {
+            let mac = IEProduct(
                 id: UUID(),
-                name: "MacBook Pro",
-                imageName: "MacBookPro",
-                price: 500_000 * i,
-                description: "테스트",
-                color: .desertTitanium,
+                name: "iMac",
+                imageName: "iMac",
+                price: 1_990_000,
+                description: "창의적인 작업도 생산적 업무도 척척. 놀라운 올인원 데스크탑.",
+                color: .blue,
                 category: .mac
             )
-            testIEProduct[.mac, default: []].append(product)
+            testIEProduct[.mac, default: []].append(mac)
         }
-        
-        for i in 1...14 {
-            let product = IEProduct(
+        for _ in 1...14 {
+            let iPad = IEProduct(
                 id: UUID(),
                 name: "iPad Pro",
                 imageName: "iPadPro",
-                price: 500_000 * i,
-                description: "테스트",
-                color: .desertTitanium,
+                price: 1_599_000,
+                description: "최첨단 기술이 구현하는 궁극의 iPad 경험.",
+                color: .silver,
                 category: .iPad
             )
-            testIEProduct[.iPad, default: []].append(product)
+            testIEProduct[.iPad, default: []].append(iPad)
         }
-        
-        for i in 1...16 {
-            let product = IEProduct(
+        for _ in 1...16 {
+            let acc = IEProduct(
                 id: UUID(),
-                name: "Apple Pencil Pro",
-                imageName: "ApplePencilPro",
-                price: 500_000 * i,
-                description: "테스트",
-                color: .desertTitanium,
+                name: "MagSafe형 iPhone 16 Pro 실리콘 케이스",
+                imageName: "MagSafeCase",
+                price: 69_000,
+                description: "",
+                color: .aquamarine,
                 category: .acc
             )
-            testIEProduct[.acc, default: []].append(product)
+            testIEProduct[.acc, default: []].append(acc)
         }
     }
     
+    /// 모든 제품 데이터 배열로 반환
     private func combineAllProduct() -> [IEProduct] {
-        var allProduct = [IEProduct]()
-        testIEProduct.forEach {
-            $0.value.forEach { product in
-                allProduct.append(product)
-            }
-        }
+        let allProduct = testIEProduct.flatMap { $0.value }
+        
         return allProduct.shuffled()
     }
+    
+    /// 테스트 장바구니 데이터 생성
+    private func makeTestCartData() {
+        let iPhone = testIEProduct[.iPhone]!.first!
+        let mac = testIEProduct[.mac]!.first!
+        let iPad = testIEProduct[.iPad]!.first!
+        let acc = testIEProduct[.acc]!.first!
+        testCartData.append(contentsOf: [iPhone, mac, iPad, acc])
+        
+        for (i, data) in testCartData.enumerated() {
+            let test = IECartModel(
+                id: UUID(),
+                productID: data.id,
+                selectedColor: data.color,
+                cartQuantity: i + 1
+            )
+            CoreDataManager.saveData(test)
+        }
+    }
+    
+    /// 장바구니 데이터 불러오기
+    private func fetchCartData() {
+        cartModelList = CoreDataManager.fetchData()
+        print(cartModelList)
+    }
+    
+    // MARK: - objc Methods
     
     @objc
     private func didChangeValue(_ sender: UISegmentedControl) {
@@ -188,7 +218,7 @@ class ViewController: BaseViewController {
     }
     
     @objc
-    func presentToPayViewController() {
+    private func presentToPayViewController() {
         let vc = PayModalViewController()
         
         if let sheet = vc.sheetPresentationController {

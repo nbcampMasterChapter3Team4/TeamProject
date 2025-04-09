@@ -7,8 +7,7 @@
 
 import UIKit
 
-class BestItemCell: UICollectionViewCell {
-    static let reuseIdentifier = "BestItemCell"
+class BestItemCell: BaseCollectionViewCell {
     
     // MARK: - UI Components
     
@@ -22,12 +21,13 @@ class BestItemCell: UICollectionViewCell {
         $0.text = "iPhone 16 Pro"
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.black100
+                return .black100
             } else {
-                return UIColor.white200
+                return .white200
             }
         }
         $0.font = .fontGuide(.mainItemTitle)
+        // TODO: - 라벨 줄 수 조정 및 Trailing 잡기
     }
     
     private let bestItemImageView = UIImageView().then {
@@ -40,42 +40,17 @@ class BestItemCell: UICollectionViewCell {
         $0.text = "₩1,550,000부터 "
         $0.textColor = UIColor { traitCollection in
             if traitCollection.userInterfaceStyle == .light {
-                return UIColor.gray400
+                return .gray400
             } else {
-                return UIColor.blue200
+                return .blue200
             }
         }
         $0.font = .fontGuide(.mainItemPrice)
     }
     
-    // MARK: - Initializer
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setStyles()
-        setLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Style Helper
-    
-    private func setStyles() {
-        self.layer.cornerRadius = 10
-        self.backgroundColor = UIColor { traitCollection in
-            if traitCollection.userInterfaceStyle == .light {
-                return UIColor.gray100
-            } else {
-                return UIColor.gray700
-            }
-        }
-    }
-    
     // MARK: - Layout Helper
     
-    private func setLayout() {
+    override func setLayout() {
         self.addSubviews(bestTitleLabel, bestItemTitleLabel, bestItemImageView, bestItemPriceLabel)
         
         bestTitleLabel.snp.makeConstraints {
@@ -104,8 +79,7 @@ class BestItemCell: UICollectionViewCell {
     // MARK: - Methods
     
     func configure(title: String, image: UIImage?, price: Int) {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
+        let numberFormatter = NumberFormatter.getNumberFormatter()
         let priceStr = numberFormatter.string(for: price) ?? "1,550,000"
         
         bestItemTitleLabel.text = title
@@ -122,14 +96,14 @@ class BestItemCell: UICollectionViewCell {
             let imageSize = bestItemImageView.image?.size
             if imageSize?.width ?? 0 >= imageSize?.height ?? 0 {
                 // 너비가 길면 너비 기준 높이 설정
-                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.45 : 0.5)  // 너비가 긴 셀
+                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.35 : 0.45)  // 너비가 긴 셀
                 $0.height.equalTo(bestItemImageView.snp.width).multipliedBy(1)
             } else {
                 // 높이가 길면 높이 기준 너비 설정
                 $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.75 : 0.8)
                 $0.width.equalTo(bestItemImageView.snp.height).multipliedBy(1)
             }
-            $0.trailing.equalToSuperview().inset(10)
+            $0.trailing.equalToSuperview().inset(20)
             $0.centerY.equalToSuperview()
         }
     }

@@ -25,6 +25,9 @@ class ProductCollectionPageView: BaseView {
     
     private var products: [IEProduct] = []
     
+    private let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
+    private let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
+    
     private var pageCount: Int = 0
     enum Section: Hashable {
         case page(Int)
@@ -107,49 +110,57 @@ private extension ProductCollectionPageView {
         return layout
     }
     
-    func createSection(page: Int) -> NSCollectionLayoutSection {
-        let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
-        let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
-        
-        // item
-        // 첫 번째 페이지 맨 위 아이템 사이즈(넓은 셀)
-        let fullWidthitemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
+    func createItem(width: CGFloat) -> NSCollectionLayoutItem {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(width),
             heightDimension: .fractionalHeight(1.0)
         )
-        // 나머지 아이템 사이즈 (절반 셀)
-        let twoColumnitemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.5),
-            heightDimension: .fractionalHeight(1.0)
-        )
-        let fullWidthitem = NSCollectionLayoutItem(layoutSize: fullWidthitemSize)
-        let twoColumnitem = NSCollectionLayoutItem(layoutSize: twoColumnitemSize)
-        fullWidthitem.contentInsets = horizontalInsets
-        twoColumnitem.contentInsets = horizontalInsets
         
-        // group
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = horizontalInsets
+        return item
+    }
+    
+    func createRowGroup(column: Int, item: NSCollectionLayoutItem) -> NSCollectionLayoutGroup {
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1 / 3)
         )
-        let firstRowItem = (page == 0) ? fullWidthitem : twoColumnitem
-        let firstRowCount = (page == 0) ? 1 : 2
-        let firstRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: firstRowItem, count: firstRowCount)
-        let secondRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: twoColumnitem, count: 2)
-        let thirdRow = secondRow
-        firstRow.contentInsets = verticalInsets
-        secondRow.contentInsets = verticalInsets
-        thirdRow.contentInsets = verticalInsets
-        // 한 페이지를 나타내는 group
-        let nestedGroupSize = NSCollectionLayoutSize(
+        
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: column)
+        group.contentInsets = verticalInsets
+        return group
+    }
+    
+    func createPageGroup(items: [NSCollectionLayoutItem]) -> NSCollectionLayoutGroup {
+        let pageGroupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
         )
-        let nestedGroup = NSCollectionLayoutGroup.vertical(layoutSize: nestedGroupSize, subitems: [firstRow, secondRow, thirdRow])
-        nestedGroup.contentInsets = horizontalInsets
+        let pageGroup = NSCollectionLayoutGroup.vertical(layoutSize: pageGroupSize, subitems: items)
+        pageGroup.contentInsets = horizontalInsets
+        
+        return pageGroup
+    }
+    
+    func createSection(page: Int) -> NSCollectionLayoutSection {
+        // item
+        // 첫 번째 페이지 맨 위 아이템 사이즈(넓은 셀)
+        let fullWidthitem = createItem(width: 1.0)
+        // 나머지 아이템 사이즈 (절반 셀)
+        let twoColumnitem = createItem(width: 0.5)
+        
+        // group
+        let firstRowColumn = (page == 0) ? 1 : 2
+        let firstRowItem = (page == 0) ? fullWidthitem : twoColumnitem
+        let firstRow = createRowGroup(column: firstRowColumn, item: firstRowItem)
+        let secondRow = createRowGroup(column: 2, item: twoColumnitem)
+        let thirdRow = secondRow
+        // 한 페이지를 나타내는 group
+        let pageGroup = createPageGroup(items: [firstRow, secondRow, thirdRow])
         
         // section
-        let section = NSCollectionLayoutSection(group: nestedGroup)
+        let section = NSCollectionLayoutSection(group: pageGroup)
         section.visibleItemsInvalidationHandler = { item, offset, env in
             let index = Int((offset.x / env.container.contentSize.width).rounded(.toNearestOrEven))
             print(">>> \(index)")
@@ -202,11 +213,7 @@ private extension ProductCollectionPageView {
     }
     
     func reloadPageControl() {
-        let exceptFirstPage = products.count - 5
-        let pageCount = exceptFirstPage % 6 == 0 ? exceptFirstPage / 6 + 1 : exceptFirstPage / 6 + 2
-        pageControl.numberOfPages = pageCount
-        
-        // 0번 인덱스로 스크롤
+        pageControl.numberOfPages = collectionView.numberOfSections
         pageControl.currentPage = 0
         let indexPath = IndexPath(item: 0, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
