@@ -126,12 +126,36 @@ class PayModalViewController: BaseViewController {
         }
     }
 
-    
-    private func alertForZeroItem(to titleLabel: String) {
+    private func removeItemView(at index: Int) {
+        let itemView = shoppingItemViews[index]
+        stackView.removeArrangedSubview(itemView)
+        itemView.removeFromSuperview()
+        shoppingItemViews.remove(at: index)
+    }
+
+    private func removeAllItems() {
+        for itemView in shoppingItemViews {
+            stackView.removeArrangedSubview(itemView)
+            itemView.removeFromSuperview()
+        }
+        shoppingItemViews.removeAll()
+    }
+
+
+    private func alertForZeroItem(to titleLabel: String, for index: Int) {
         let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "수량이 0입니다. 장바구니에서 삭제됩니다", preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
+            // TODO: 해당 데이터 삭제
+            self.removeItemView(at: index)
+            if self.shoppingItemViews.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.dismiss(animated: true) {
+                        print("모든 아이템이 삭제되어 모달 닫힘")
+                    }
+                }
+            }
         }
 
         alert.addAction(okAction)
@@ -165,7 +189,7 @@ class PayModalViewController: BaseViewController {
 
         if currentValue == .zero {
             if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
-                alertForZeroItem(to: currentItemTitleLabel)
+                alertForZeroItem(to: currentItemTitleLabel, for: index)
             }
         } else if currentValue > 10 {
             alertForOverItem()
@@ -185,10 +209,15 @@ class PayModalViewController: BaseViewController {
     @objc
     private func alertForDeleteAllItems() {
         let alert = UIAlertController(title: "주문 내역을 모두 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
-        
+
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForDeleteAllItems 확인 버튼 눌림")
             // TODO: 데이터 전체 삭제
+            self.removeAllItems()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.popModal()
+            }
+
         }
 
         let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
