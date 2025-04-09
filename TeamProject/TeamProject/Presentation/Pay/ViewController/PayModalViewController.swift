@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 class PayModalViewController: BaseViewController {
-    
+
     // 임시데이터
     private struct ShoppingItemModel {
         let image: UIImage
@@ -28,7 +28,7 @@ class PayModalViewController: BaseViewController {
             ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: "1200000", count: 1),
             ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: "650000", count: 1)
         ]
-        
+
         return sampleItems.map { item in
             let view = ShoppingItemView()
             view.configure(item.image, item.title, item.description, item.price, item.count)
@@ -36,83 +36,84 @@ class PayModalViewController: BaseViewController {
         }
     }()
 
-    
+
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
     private let popButton = UIButton().then {
-        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
+//        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
+        $0.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
     }
-    
+
     private let scrollView = UIScrollView()
-    
+
     private let stackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 26
         $0.alignment = .fill
         $0.distribution = .equalSpacing
     }
-    
+
     private let bottomButtonView = CustomBottomButton()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setBottomButton()
         setAddTarget()
         configureShoppingItems()
     }
-    
+
     override func setStyles() {
         view.backgroundColor = .white200
     }
-    
+
     override func setLayout() {
         view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView)
         scrollView.addSubview(stackView)
-        
+
         deleteButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(50)
             $0.leading.equalToSuperview().offset(18)
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 25 / 874)
             $0.width.equalTo(SizeLiterals.Screen.screenWidth * 68 / 402)
         }
-        
+
         popButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.trailing.equalToSuperview().offset(-20)
             $0.height.width.equalTo(SizeLiterals.Screen.screenHeight * 30 / 874)
         }
-        
+
         scrollView.snp.makeConstraints {
             $0.top.equalTo(deleteButton.snp.bottom).offset(26)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(bottomButtonView.snp.top)
         }
-        
+
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(18)
             $0.width.equalTo(scrollView.snp.width).offset(-36)
         }
-        
-        
+
+
         bottomButtonView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
     }
-    
+
     // MARK: - Methods
-    
+
     private func setAddTarget() {
         deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
-        
+
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
-    
+
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
-    
+
     private func configureShoppingItems() {
         for itemView in shoppingItemViews {
             itemView.snp.makeConstraints {
@@ -162,7 +163,7 @@ class PayModalViewController: BaseViewController {
 
         present(alert, animated: true, completion: nil)
     }
-    
+
     private func alertForOverItem() {
         let alert = UIAlertController(title: "상품을 추가할 수 없습니다.", message: "상품당 담을 수 있는 수량은 10개입니다", preferredStyle: .alert)
 
@@ -223,10 +224,10 @@ class PayModalViewController: BaseViewController {
         let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
             print("alertForDeleteAllItems 취소 버튼 눌림")
         }
-        
+
         alert.addAction(okAction)
         alert.addAction(cancelAction)
-        
+
         present(alert, animated: true, completion: nil)
     }
 }
