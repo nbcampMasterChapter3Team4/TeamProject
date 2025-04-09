@@ -187,13 +187,12 @@ class PayModalViewController: BaseViewController {
         let alert = UIAlertController(title: "주문 내역을 모두 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
-            print("확인 버튼 눌림")
+            print("alertForDeleteAllItems 확인 버튼 눌림")
             // TODO: 데이터 전체 삭제
         }
-        
+
         let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
-            print("취소 버튼 눌림")
-            
+            print("alertForDeleteAllItems 취소 버튼 눌림")
         }
         
         alert.addAction(okAction)
