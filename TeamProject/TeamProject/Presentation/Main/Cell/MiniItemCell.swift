@@ -70,23 +70,17 @@ class MiniItemCell: UICollectionViewCell {
     
     private func setLayout() {
         self.addSubviews(miniItemTitleLabel, miniItemImageView, miniItemPriceLabel)
-        
-        let screenWidth = SizeLiterals.Screen.screenWidth
-        let screenHeight = SizeLiterals.Screen.screenHeight
-        let isSmallDevice = min(screenWidth, screenHeight) <= 375
-        
+
         miniItemTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(10)
         }
         
-        miniItemImageView.snp.makeConstraints {
-//            if miniItemImageView.image
-            $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
-            // TODO: 이미지 비율 조정
-            $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
-            $0.centerX.centerY.equalToSuperview()
-        }
+//        miniItemImageView.snp.makeConstraints {
+//            $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
+//            $0.height.equalToSuperview().multipliedBy(0.6)
+//            $0.centerX.centerY.equalToSuperview()
+//        }
         
         miniItemPriceLabel.snp.makeConstraints {
             $0.leading.equalTo(miniItemTitleLabel)
@@ -104,5 +98,25 @@ class MiniItemCell: UICollectionViewCell {
         miniItemTitleLabel.text = title
         miniItemImageView.image = image
         miniItemPriceLabel.text = "₩\(priceStr)부터"
+        
+        // miniItemImageView에 image가 반영되었을 때 레이아웃 설정
+        // - 이미지가 작게 보이는 문제 해결
+        miniItemImageView.snp.makeConstraints {
+            let screenWidth = SizeLiterals.Screen.screenWidth
+            let screenHeight = SizeLiterals.Screen.screenHeight
+            let isSmallDevice = min(screenWidth, screenHeight) <= 375
+            
+            let imageSize = miniItemImageView.image?.size
+            if imageSize?.width ?? 0 >= imageSize?.height ?? 0 {
+                // 너비가 길면 너비 기준 높이 설정
+                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
+                $0.height.equalTo(miniItemImageView.snp.width).multipliedBy(1)
+            } else {
+                // 높이가 길면 높이 기준 너비 설정
+                $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.55 : 0.60)
+                $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
+            }
+            $0.centerX.centerY.equalToSuperview()
+        }
     }
 }

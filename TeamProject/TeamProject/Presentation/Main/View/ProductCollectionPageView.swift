@@ -158,6 +158,7 @@ private extension ProductCollectionPageView {
             cell.configure(title: item.name, image: item.productImage, price: item.price)
         }
         
+        // TODO: - 셀이 재배치될때 너비가 긴 셀에는 BestItemCell만 들어가도록 수정
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
             if indexPath.section == 0, indexPath.item == 0 {
                 return collectionView.dequeueConfiguredReusableCell(using: bestCellRegistation, for: indexPath, item: item)
