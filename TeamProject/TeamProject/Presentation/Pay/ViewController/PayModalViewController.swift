@@ -114,6 +114,9 @@ class PayModalViewController: BaseViewController {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
 
+    
+    // MARK: - Methods
+    
     private func configureShoppingItems() {
         for itemView in shoppingItemViews {
             itemView.snp.makeConstraints {
@@ -127,6 +130,8 @@ class PayModalViewController: BaseViewController {
         }
     }
 
+    // MARK: - RemoveItem Methods
+    
     private func removeItemView(at index: Int) {
         let itemView = shoppingItemViews[index]
         stackView.removeArrangedSubview(itemView)
@@ -141,14 +146,14 @@ class PayModalViewController: BaseViewController {
         }
         shoppingItemViews.removeAll()
     }
-
-
+    
+    // MARK: - Alert Methods
+    
     private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
         let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "장바구니에서 이 항목을 제거하시겠습니까?", preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
-            // TODO: 해당 데이터 삭제
             self.removeItemView(at: index)
             if self.shoppingItemViews.isEmpty {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -223,7 +228,6 @@ class PayModalViewController: BaseViewController {
 
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForDeleteAllItems 확인 버튼 눌림")
-            // TODO: 데이터 전체 삭제
             self.removeAllItems()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.popModal()
