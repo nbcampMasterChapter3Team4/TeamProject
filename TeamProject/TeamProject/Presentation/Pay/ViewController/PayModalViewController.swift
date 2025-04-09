@@ -66,6 +66,10 @@ class PayModalViewController: BaseViewController {
     
     func setAddTarget() {
         testView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
+        
+        deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
+        
+        popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
     
     func setBottomButton() {
@@ -79,5 +83,32 @@ class PayModalViewController: BaseViewController {
     private func stepperValueChanged(_ sender: UIStepper) {
         let currentValue = Int(sender.value)
         testView.getItemCountLabel().text = "\(currentValue)"
+    }
+    
+    @objc
+    private func popModal() {
+        dismiss(animated: true) { 
+            print("모달 닫힘")
+        }
+    }
+    
+    @objc
+    private func alertForDeleteAllItems() {
+        let alert = UIAlertController(title: "주문 내역을 모두 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
+        
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            print("확인 버튼 눌림")
+            // TODO: 데이터 전체 삭제
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
+            print("취소 버튼 눌림")
+            
+        }
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
     }
 }
