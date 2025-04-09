@@ -24,9 +24,9 @@ class PayModalViewController: BaseViewController {
     // 임시데이터
     private var shoppingItemViews: [ShoppingItemView] = {
         let sampleItems: [ShoppingItemModel] = [
-            ShoppingItemModel(image: UIImage(), title: "iPad Air", description: "최첨단 기술이 구현하는 궁극의 iPad 경험.", price: "1,900,000", count: 1),
-            ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: "1,200,000", count: 1),
-            ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: "650,000", count: 1)
+            ShoppingItemModel(image: UIImage(), title: "iPad Air", description: "최첨단 기술이 구현하는 궁극의 iPad 경험.", price: "1900000", count: 1),
+            ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: "1200000", count: 1),
+            ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: "650000", count: 1)
         ]
         
         return sampleItems.map { item in

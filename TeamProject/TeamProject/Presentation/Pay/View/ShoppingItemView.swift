@@ -103,7 +103,7 @@ class ShoppingItemView: BaseView {
         itemImageView.image = image
         itemTitleLabel.text = title
         itemDescriptionLabel.text = description
-        itemPriceLabel.text = "₩\(price)" // 1,000,000 변환 작업 필요
+        itemPriceLabel.text = "₩\(formatPrice(price))" // 1,000,000 변환 작업 필요
         itemCountLabel.text = "\(itemCount)"
     }
     
@@ -119,5 +119,14 @@ class ShoppingItemView: BaseView {
     
     func getItemTitleLabel() -> UILabel {
         return itemTitleLabel
+    }
+    
+    private func formatPrice(_ price: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        if let number = Int(price) {
+            return formatter.string(from: NSNumber(value: number)) ?? price
+        }
+        return price
     }
 }
