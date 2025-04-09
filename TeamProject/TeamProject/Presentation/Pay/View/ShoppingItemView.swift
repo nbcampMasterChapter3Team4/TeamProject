@@ -22,14 +22,27 @@ class ShoppingItemView: BaseView {
     private let itemTitleLabel = UILabel().then {
         $0.text = "iPad Air"
         $0.font = .fontGuide(.payModalItemTitle)
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
+            
     }
     
     private let itemDescriptionLabel = UILabel().then {
         $0.text = "최첨단 기술이 구현하는 궁극의 iPad 경험."
         $0.font = .fontGuide(.payModalItemDesc)
         $0.numberOfLines = 0
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
     }
     
     private let itemPriceLabel = UILabel().then {
@@ -39,7 +52,13 @@ class ShoppingItemView: BaseView {
     }
     
     private let itemCountLabel = UILabel().then {
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
         $0.font = .fontGuide(.payModalItemDesc)
         $0.text = "1"
     }

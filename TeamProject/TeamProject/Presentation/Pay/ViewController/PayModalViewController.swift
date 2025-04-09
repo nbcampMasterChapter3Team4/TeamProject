@@ -64,7 +64,13 @@ class PayModalViewController: BaseViewController {
     }
 
     override func setStyles() {
-        view.backgroundColor = .white200
+        view.backgroundColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .white200
+            } else {
+                return .gray900
+            }
+        }
     }
 
     override func setLayout() {
@@ -114,9 +120,9 @@ class PayModalViewController: BaseViewController {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
 
-    
+
     // MARK: - Methods
-    
+
     private func configureShoppingItems() {
         for itemView in shoppingItemViews {
             itemView.snp.makeConstraints {
@@ -131,7 +137,7 @@ class PayModalViewController: BaseViewController {
     }
 
     // MARK: - RemoveItem Methods
-    
+
     private func removeItemView(at index: Int) {
         let itemView = shoppingItemViews[index]
         stackView.removeArrangedSubview(itemView)
@@ -146,9 +152,9 @@ class PayModalViewController: BaseViewController {
         }
         shoppingItemViews.removeAll()
     }
-    
+
     // MARK: - Alert Methods
-    
+
     private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
         let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "장바구니에서 이 항목을 제거하시겠습니까?", preferredStyle: .alert)
 

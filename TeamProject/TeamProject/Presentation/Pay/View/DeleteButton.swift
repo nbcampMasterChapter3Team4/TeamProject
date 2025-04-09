@@ -24,7 +24,13 @@ class DeleteButton: UIButton {
 
     private let detailTextLabel = UILabel().then {
         $0.text = "전체 삭제"
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
         $0.font = .fontGuide(.payModalDeleteLabel)
     }
     
