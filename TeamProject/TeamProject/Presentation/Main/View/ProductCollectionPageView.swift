@@ -36,6 +36,7 @@ class ProductCollectionPageView: BaseView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setAddTarget()
         configureDataSource()
         reloadData(animated: false)
     }
@@ -67,10 +68,20 @@ class ProductCollectionPageView: BaseView {
     
     // MARK: - Methods
     
+    func setAddTarget() {
+        pageControl.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
+    }
+    
     func setData(products: [IEProduct], animated: Bool) {
         self.products = products
         reloadData(animated: animated)
         reloadPageControl()
+    }
+    
+    @objc
+    func didChangeValue(_ sender: UIPageControl) {
+        let indexPath = IndexPath(item: 0, section: sender.currentPage)
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
     }
 }
 
