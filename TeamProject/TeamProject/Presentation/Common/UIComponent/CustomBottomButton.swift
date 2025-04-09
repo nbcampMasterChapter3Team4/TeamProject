@@ -49,14 +49,16 @@ class CustomBottomButton: BaseView {
         leftButtonView.addSubviews(leftButtonTitleLabel, leftButtonSubTitleLabel)
         
         leftButtonView.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview()
+            $0.top.leading.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             $0.leading.equalToSuperview()
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 83 / 874)
             $0.width.equalTo(SizeLiterals.Screen.screenWidth * 260 / 402)
         }
  
         rightButton.snp.makeConstraints {
-            $0.top.trailing.bottom.equalToSuperview()
+            $0.top.trailing.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
             $0.leading.equalTo(leftButtonView.snp.trailing)
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 83 / 874)
             $0.width.equalTo(SizeLiterals.Screen.screenWidth * 142 / 402)
