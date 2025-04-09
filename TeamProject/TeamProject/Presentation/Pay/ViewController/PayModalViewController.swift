@@ -44,7 +44,14 @@ class PayModalViewController: BaseViewController {
         $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
     }
     
-    private let testView = ShoppingItemView()
+    private let scrollView = UIScrollView()
+    
+    private let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 26
+        $0.alignment = .fill
+        $0.distribution = .equalSpacing
+    }
     
     private let bottomButtonView = CustomBottomButton()
     
@@ -52,6 +59,7 @@ class PayModalViewController: BaseViewController {
         super.viewDidLoad()
         setBottomButton()
         setAddTarget()
+        configureShoppingItems()
     }
     
     override func setStyles() {
@@ -59,7 +67,8 @@ class PayModalViewController: BaseViewController {
     }
     
     override func setLayout() {
-        view.addSubviews(deleteButton, popButton, testView, bottomButtonView)
+        view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView)
+        scrollView.addSubview(stackView)
         
         deleteButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(50)
@@ -74,12 +83,17 @@ class PayModalViewController: BaseViewController {
             $0.height.width.equalTo(SizeLiterals.Screen.screenHeight * 30 / 874)
         }
         
-        testView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(deleteButton.snp.bottom).offset(26)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(SizeLiterals.Screen.screenWidth * 366 / 402)
-            $0.height.equalTo(SizeLiterals.Screen.screenHeight * 99 / 874)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(bottomButtonView.snp.top)
         }
+        
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(18)
+            $0.width.equalTo(scrollView.snp.width).offset(-36)
+        }
+        
         
         bottomButtonView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
@@ -89,9 +103,7 @@ class PayModalViewController: BaseViewController {
     
     // MARK: - Methods
     
-    func setAddTarget() {
-        testView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
-        
+    private func setAddTarget() {
         deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
         
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
@@ -100,6 +112,20 @@ class PayModalViewController: BaseViewController {
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
+    
+    private func configureShoppingItems() {
+        for itemView in shoppingItemViews {
+            itemView.snp.makeConstraints {
+                $0.width.equalTo(SizeLiterals.Screen.screenWidth * 366 / 402)
+                $0.height.equalTo(SizeLiterals.Screen.screenHeight * 99 / 874)
+            }
+
+            itemView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
+
+            stackView.addArrangedSubview(itemView)
+        }
+    }
+
     
     private func alertForZeroItem(to titleLabel: String) {
         let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "수량이 0입니다. 장바구니에서 삭제됩니다", preferredStyle: .alert)
@@ -130,17 +156,24 @@ class PayModalViewController: BaseViewController {
 
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
+        guard let index = shoppingItemViews.firstIndex(where: {
+            $0.getItemCountStepper() === sender
+        }) else { return }
+
+        let itemView = shoppingItemViews[index]
         let currentValue = Int(sender.value)
+
         if currentValue == .zero {
-            if let currentItemTitleLabel = testView.getItemTitleLabel().text {
+            if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
                 alertForZeroItem(to: currentItemTitleLabel)
             }
         } else if currentValue > 10 {
             alertForOverItem()
         } else {
-            testView.getItemCountLabel().text = "\(currentValue)"
+            itemView.getItemCountLabel().text = "\(currentValue)"
         }
     }
+
 
     @objc
     private func popModal() {
