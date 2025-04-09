@@ -156,9 +156,7 @@ class PayModalViewController: BaseViewController {
     // MARK: - Alert Methods
 
     private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
-        let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "장바구니에서 이 항목을 제거하시겠습니까?", preferredStyle: .alert)
-
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+        let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
             self.removeItemView(at: index)
             if self.shoppingItemViews.isEmpty {
@@ -170,31 +168,34 @@ class PayModalViewController: BaseViewController {
             }
         }
 
-        let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
+        let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
             print("alertForZeroItem 취소 버튼 눌림")
             stepper.value = 1
             self.shoppingItemViews[index].getItemCountLabel().text = "1"
         }
 
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-
-        present(alert, animated: true, completion: nil)
+        showAlert(
+            title: "\(titleLabel)가 삭제됩니다.",
+            message: "장바구니에서 이 항목을 제거하시겠습니까?",
+            actions: [okAction, cancelAction]
+        )
     }
 
-    private func alertForOverItem(for index: Int, stepper: UIStepper) {
-        let alert = UIAlertController(title: "상품을 추가할 수 없습니다.", message: "상품당 담을 수 있는 수량은 10개입니다", preferredStyle: .alert)
 
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+    private func alertForOverItem(for index: Int, stepper: UIStepper) {
+        let okAction = makeAlertAction(title: "확인") { _ in
             print("alertForOverItem 확인 버튼 눌림")
             stepper.value = 10
             self.shoppingItemViews[index].getItemCountLabel().text = "10"
         }
 
-        alert.addAction(okAction)
-
-        present(alert, animated: true, completion: nil)
+        showAlert(
+            title: "상품을 추가할 수 없습니다.",
+            message: "상품당 담을 수 있는 수량은 10개입니다",
+            actions: [okAction]
+        )
     }
+
 
 
     // MARK: - @objc Methods
@@ -230,24 +231,22 @@ class PayModalViewController: BaseViewController {
 
     @objc
     private func alertForDeleteAllItems() {
-        let alert = UIAlertController(title: "주문 내역을 모두 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
-
-        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+        let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForDeleteAllItems 확인 버튼 눌림")
             self.removeAllItems()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.popModal()
             }
-
         }
 
-        let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
+        let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
             print("alertForDeleteAllItems 취소 버튼 눌림")
         }
 
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-
-        present(alert, animated: true, completion: nil)
+        showAlert(
+            title: "주문 내역을 모두 삭제하시겠습니까?",
+            message: nil,
+            actions: [okAction, cancelAction]
+        )
     }
 }
