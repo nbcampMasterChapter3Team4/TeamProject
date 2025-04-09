@@ -76,22 +76,54 @@ class PayModalViewController: BaseViewController {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
     
+    private func alertForZeroItem(to titleLabel: String) {
+        let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "수량이 0입니다. 장바구니에서 삭제됩니다", preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            print("alertForZeroItem 확인 버튼 눌림")
+        }
+
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+    }
     
+    private func alertForOverItem() {
+        let alert = UIAlertController(title: "상품을 추가할 수 없습니다.", message: "상품당 담을 수 있는 수량은 10개입니다", preferredStyle: .alert)
+
+        let okAction = UIAlertAction(title: "확인", style: .default) { _ in
+            print("alertForOverItem 확인 버튼 눌림")
+        }
+
+        alert.addAction(okAction)
+
+        present(alert, animated: true, completion: nil)
+    }
+
+
     // MARK: - @objc Methods
-    
+
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
         let currentValue = Int(sender.value)
-        testView.getItemCountLabel().text = "\(currentValue)"
+        if currentValue == .zero {
+            if let currentItemTitleLabel = testView.getItemTitleLabel().text {
+                alertForZeroItem(to: currentItemTitleLabel)
+            }
+        } else if currentValue > 10 {
+            alertForOverItem()
+        } else {
+            testView.getItemCountLabel().text = "\(currentValue)"
+        }
     }
-    
+
     @objc
     private func popModal() {
-        dismiss(animated: true) { 
+        dismiss(animated: true) {
             print("모달 닫힘")
         }
     }
-    
+
     @objc
     private func alertForDeleteAllItems() {
         let alert = UIAlertController(title: "주문 내역을 모두 삭제하시겠습니까?", message: nil, preferredStyle: .alert)

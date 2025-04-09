@@ -44,8 +44,8 @@ class ShoppingItemView: BaseView {
         $0.text = "1"
     }
     private let itemCountStepper = UIStepper().then {
-        $0.minimumValue = 1
-        $0.maximumValue = 99
+        $0.minimumValue = 0
+        $0.maximumValue = 11
         $0.stepValue = 1
         $0.value = 1
     }
@@ -115,5 +115,9 @@ class ShoppingItemView: BaseView {
     /// PayModal VC에서 itemCountLabel을 접근하기 위함
     func getItemCountLabel() -> UILabel {
         return itemCountLabel
+    }
+    
+    func getItemTitleLabel() -> UILabel {
+        return itemTitleLabel
     }
 }
