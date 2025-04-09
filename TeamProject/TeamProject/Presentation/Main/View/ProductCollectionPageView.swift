@@ -25,9 +25,9 @@ class ProductCollectionPageView: BaseView {
     
     private var products: [IEProduct] = []
     
-    enum Section: Int, CaseIterable {
-        case firstPage
-        case otherPage
+    private var pageCount: Int = 0
+    enum Section: Hashable {
+        case page(Int)
     }
     typealias Item = IEProduct
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
@@ -86,8 +86,7 @@ private extension ProductCollectionPageView {
     
     func createLayout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnv in
-            guard let page = Section(rawValue: sectionIndex) else { return nil }
-            return self.createSection(page: page)
+            return self.createSection(page: sectionIndex)
         }
         
         let config = UICollectionViewCompositionalLayoutConfiguration()
@@ -97,7 +96,7 @@ private extension ProductCollectionPageView {
         return layout
     }
     
-    func createSection(page: Section) -> NSCollectionLayoutSection {
+    func createSection(page: Int) -> NSCollectionLayoutSection {
         let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
         let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
         
@@ -122,8 +121,8 @@ private extension ProductCollectionPageView {
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1 / 3)
         )
-        let firstRowItem = (page == .firstPage) ? fullWidthitem : twoColumnitem
-        let firstRowCount = (page == .firstPage) ? 1 : 2
+        let firstRowItem = (page == 0) ? fullWidthitem : twoColumnitem
+        let firstRowCount = (page == 0) ? 1 : 2
         let firstRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: firstRowItem, count: firstRowCount)
         let secondRow = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: twoColumnitem, count: 2)
         let thirdRow = secondRow
@@ -170,21 +169,36 @@ private extension ProductCollectionPageView {
     
     func reloadData(animated: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.firstPage, .otherPage])
         
+        // 데이터 앞 5개 저장(첫 번째 페이지)
         let firstPageItems = Array(products.prefix(5))
-        let otherPageItems = Array(products.dropFirst(5))
-        snapshot.appendItems(firstPageItems, toSection: .firstPage)
-        snapshot.appendItems(otherPageItems, toSection: .otherPage)
+        snapshot.appendSections([.page(pageCount)])
+        snapshot.appendItems(firstPageItems, toSection: .page(pageCount))
+        pageCount += 1
+        
+        let remainingProducts = Array(products.dropFirst(5))
+        // 6개씩 나눠서 배열로 저장
+        let otherPageItems = stride(from: 0, to: remainingProducts.count, by: 6).map {
+            Array(remainingProducts[$0..<min($0 + 6, remainingProducts.count)])
+        }
+        for items in otherPageItems {
+            snapshot.appendSections([.page(pageCount)])
+            snapshot.appendItems(items, toSection: .page(pageCount))
+            pageCount += 1
+        }
+        
         dataSource.apply(snapshot, animatingDifferences: animated)
     }
     
     func reloadPageControl() {
         let exceptFirstPage = products.count - 5
         let pageCount = exceptFirstPage % 6 == 0 ? exceptFirstPage / 6 + 1 : exceptFirstPage / 6 + 2
-        pageControl.currentPage = 0
         pageControl.numberOfPages = pageCount
-        // TODO: 데이터 리로드 시 0번 인덱스로 스크롤
+        
+        // 0번 인덱스로 스크롤
+        pageControl.currentPage = 0
+        let indexPath = IndexPath(item: 0, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         // TODO: 페이지 슬라이드 시 스크롤
     }
 }
