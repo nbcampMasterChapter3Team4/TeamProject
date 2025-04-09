@@ -15,7 +15,11 @@ class DeleteButton: UIButton {
     // MARK: - UI Components
 
     private let deleteImage = UIImageView().then {
-        $0.image = ImageLiterals.iCon.trash_black_ic
+//        $0.image = ImageLiterals.iCon.trash_black_ic
+        // MARK: 테스트용
+        $0.image = UIImage(systemName: "trash")
+        $0.tintColor = .black000
+        
     }
 
     private let detailTextLabel = UILabel().then {
