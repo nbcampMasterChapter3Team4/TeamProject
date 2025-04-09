@@ -99,7 +99,7 @@ class ViewController: BaseViewController {
     
     // MARK: - Methods
     
-    func setAddTarget() {
+    private func setAddTarget() {
         segmentedControl.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
         bottomButtonView.getRightButton().addTarget(self, action: #selector(presentToPayViewController), for: .touchUpInside)
     }

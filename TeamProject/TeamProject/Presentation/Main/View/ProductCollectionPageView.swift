@@ -210,7 +210,6 @@ private extension ProductCollectionPageView {
         pageControl.currentPage = 0
         let indexPath = IndexPath(item: 0, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-        // TODO: 페이지 슬라이드 시 스크롤
     }
 }
 
