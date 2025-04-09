@@ -143,8 +143,8 @@ class PayModalViewController: BaseViewController {
     }
 
 
-    private func alertForZeroItem(to titleLabel: String, for index: Int) {
-        let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "수량이 0입니다. 장바구니에서 삭제됩니다", preferredStyle: .alert)
+    private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
+        let alert = UIAlertController(title: "\(titleLabel)가 삭제됩니다.", message: "장바구니에서 이 항목을 제거하시겠습니까?", preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
@@ -159,16 +159,25 @@ class PayModalViewController: BaseViewController {
             }
         }
 
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
+            print("alertForZeroItem 취소 버튼 눌림")
+            stepper.value = 1
+            self.shoppingItemViews[index].getItemCountLabel().text = "1"
+        }
+
         alert.addAction(okAction)
+        alert.addAction(cancelAction)
 
         present(alert, animated: true, completion: nil)
     }
 
-    private func alertForOverItem() {
+    private func alertForOverItem(for index: Int, stepper: UIStepper) {
         let alert = UIAlertController(title: "상품을 추가할 수 없습니다.", message: "상품당 담을 수 있는 수량은 10개입니다", preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: "확인", style: .default) { _ in
             print("alertForOverItem 확인 버튼 눌림")
+            stepper.value = 10
+            self.shoppingItemViews[index].getItemCountLabel().text = "10"
         }
 
         alert.addAction(okAction)
@@ -190,13 +199,14 @@ class PayModalViewController: BaseViewController {
 
         if currentValue == .zero {
             if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
-                alertForZeroItem(to: currentItemTitleLabel, for: index)
+                alertForZeroItem(to: currentItemTitleLabel, for: index, stepper: sender)
             }
         } else if currentValue > 10 {
-            alertForOverItem()
+            alertForOverItem(for: index, stepper: sender)
         } else {
             itemView.getItemCountLabel().text = "\(currentValue)"
         }
+
     }
 
 
