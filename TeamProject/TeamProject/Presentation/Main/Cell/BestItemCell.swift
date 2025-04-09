@@ -60,6 +60,8 @@ class BestItemCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Style Helper
+    
     private func setStyles() {
         self.layer.cornerRadius = 10
         self.backgroundColor = UIColor { traitCollection in
@@ -70,6 +72,8 @@ class BestItemCell: UICollectionViewCell {
             }
         }
     }
+    
+    // MARK: - Layout Helper
     
     private func setLayout() {
         self.addSubviews(bestTitleLabel, bestItemTitleLabel, bestItemImageView, bestItemPriceLabel)
@@ -89,10 +93,11 @@ class BestItemCell: UICollectionViewCell {
         }
         
         bestItemImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(15)
             $0.trailing.equalToSuperview().inset(10)
+            // TODO: 이미지 비율 조정
             $0.width.equalTo(bestItemImageView.snp.height).multipliedBy(1)
             $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.75 : 0.8)
+            $0.centerY.equalToSuperview()
         }
         
         bestItemPriceLabel.snp.makeConstraints {

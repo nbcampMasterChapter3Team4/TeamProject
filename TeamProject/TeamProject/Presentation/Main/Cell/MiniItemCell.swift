@@ -53,6 +53,8 @@ class MiniItemCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Style Helper
+    
     private func setStyles() {
         self.layer.cornerRadius = 10
         self.backgroundColor = UIColor { traitCollection in
@@ -63,6 +65,8 @@ class MiniItemCell: UICollectionViewCell {
             }
         }
     }
+    
+    // MARK: - Layout Helper
     
     private func setLayout() {
         self.addSubviews(miniItemTitleLabel, miniItemImageView, miniItemPriceLabel)
@@ -77,10 +81,11 @@ class MiniItemCell: UICollectionViewCell {
         }
         
         miniItemImageView.snp.makeConstraints {
-            $0.top.equalTo(miniItemTitleLabel.snp.bottom).offset(isSmallDevice ? 2 : 5)
+//            if miniItemImageView.image
             $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
+            // TODO: 이미지 비율 조정
             $0.height.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
-            $0.centerX.equalToSuperview()
+            $0.centerX.centerY.equalToSuperview()
         }
         
         miniItemPriceLabel.snp.makeConstraints {
