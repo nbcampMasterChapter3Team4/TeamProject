@@ -76,11 +76,11 @@ class MiniItemCell: UICollectionViewCell {
             $0.leading.equalToSuperview().inset(10)
         }
         
-//        miniItemImageView.snp.makeConstraints {
-//            $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
-//            $0.height.equalToSuperview().multipliedBy(0.6)
-//            $0.centerX.centerY.equalToSuperview()
-//        }
+        miniItemImageView.snp.makeConstraints {
+            $0.width.equalTo(miniItemImageView.snp.height).multipliedBy(1)
+            $0.height.equalToSuperview().multipliedBy(0.6)
+            $0.centerX.centerY.equalToSuperview()
+        }
         
         miniItemPriceLabel.snp.makeConstraints {
             $0.leading.equalTo(miniItemTitleLabel)
@@ -101,7 +101,7 @@ class MiniItemCell: UICollectionViewCell {
         
         // miniItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결
-        miniItemImageView.snp.makeConstraints {
+        miniItemImageView.snp.remakeConstraints {
             let screenWidth = SizeLiterals.Screen.screenWidth
             let screenHeight = SizeLiterals.Screen.screenHeight
             let isSmallDevice = min(screenWidth, screenHeight) <= 375

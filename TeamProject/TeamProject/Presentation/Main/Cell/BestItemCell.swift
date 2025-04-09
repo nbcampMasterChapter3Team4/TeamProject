@@ -88,12 +88,12 @@ class BestItemCell: UICollectionViewCell {
             $0.leading.equalTo(bestTitleLabel)
         }
         
-//        bestItemImageView.snp.makeConstraints {
-//            $0.trailing.equalToSuperview().inset(10)
-//            $0.width.equalTo(bestItemImageView.snp.height).multipliedBy(1)
-//            $0.height.equalToSuperview().multipliedBy(0.75)
-//            $0.centerY.equalToSuperview()
-//        }
+        bestItemImageView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(10)
+            $0.width.equalTo(bestItemImageView.snp.height).multipliedBy(1)
+            $0.height.equalToSuperview().multipliedBy(0.75)
+            $0.centerY.equalToSuperview()
+        }
         
         bestItemPriceLabel.snp.makeConstraints {
             $0.leading.equalTo(bestTitleLabel)
@@ -114,7 +114,7 @@ class BestItemCell: UICollectionViewCell {
         
         // bestItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결
-        bestItemImageView.snp.makeConstraints {
+        bestItemImageView.snp.remakeConstraints {
             let screenWidth = SizeLiterals.Screen.screenWidth
             let screenHeight = SizeLiterals.Screen.screenHeight
             let isSmallDevice = min(screenWidth, screenHeight) <= 375
