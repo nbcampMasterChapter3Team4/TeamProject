@@ -7,9 +7,20 @@
 
 import Foundation
 
-enum IECategory {
+enum IECategory: CaseIterable {
+    case all
     case iPhone
     case mac
     case iPad
     case acc
+    
+    var title: String {
+        switch self {
+        case .all:      return "All"
+        case .iPhone:   return "iPhone"
+        case .mac:      return "Mac"
+        case .iPad:     return "iPad"
+        case .acc:      return "ACC"
+        }
+    }
 }

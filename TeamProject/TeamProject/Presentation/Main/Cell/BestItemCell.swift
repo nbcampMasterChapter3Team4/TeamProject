@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BestItemCell: BaseCollectionViewCell {
+final class BestItemCell: BaseCollectionViewCell {
     
     // MARK: - UI Components
     
@@ -80,11 +80,9 @@ class BestItemCell: BaseCollectionViewCell {
     // MARK: - Methods
     
     func configure(title: String, image: UIImage?, price: Int) {
-        let priceStr = String(price)
-        
         bestItemTitleLabel.text = title
         bestItemImageView.image = image
-        bestItemPriceLabel.text = "₩\(priceStr.formattedPrice)부터"
+        bestItemPriceLabel.text = "₩\(String(price).formattedPrice)부터"
         
         // bestItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결
