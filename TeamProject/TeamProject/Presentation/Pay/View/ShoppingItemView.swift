@@ -119,7 +119,7 @@ class ShoppingItemView: BaseView {
     // MARK: - Methods
     
     /// 초기 각각의 Title을 set하기 위한 configure
-    func configure(_ image: UIImage, _ title: String, _ description: String, _ price: String, _ itemCount: Int) {
+    func configure(_ image: UIImage, _ title: String, _ description: String, _ price: Int, _ itemCount: Int) {
         itemImageView.image = image
         itemTitleLabel.text = title
         itemDescriptionLabel.text = description

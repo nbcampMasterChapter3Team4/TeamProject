@@ -182,7 +182,7 @@ final class ViewController: BaseViewController {
         
         var price = 0
         shoppingCart.forEach { price += appleProducts[$0.productID].price }
-        bottomButtonView.setPrice("₩\(String(price).formattedPrice)")
+        bottomButtonView.setPrice("₩\(price.formattedPrice)")
         bottomButtonView.getRightButton().setTitle("장바구니(\(shoppingCart.count))", for: .normal)
     }
     
