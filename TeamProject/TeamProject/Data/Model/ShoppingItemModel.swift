@@ -15,4 +15,19 @@ struct ShoppingItemModel {
     let price: Int // IECartModel price
     var quantity: Int // IECartModel cartQuantity
     let color: IEColor // IECartModel selectedColor
+    
+    init?(cartModel: IECartModel, products: [IEProduct]) {
+        guard let product = products.first(where: { $0.id == cartModel.productID }) else {
+            return nil
+        }
+
+        self.id = cartModel.id
+        self.image = ImageLiterals.Detail.image(for: product, color: cartModel.selectedColor)
+        self.title = product.name
+        self.description = product.description
+        self.price = product.price
+        self.quantity = cartModel.cartQuantity
+        self.color = cartModel.selectedColor
+    }
 }
+
