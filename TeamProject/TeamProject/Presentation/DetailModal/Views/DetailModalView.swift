@@ -3,16 +3,6 @@ import UIKit
 import SnapKit
 import Then
 
-let mockUpData: IEProduct = IEProduct(
-    id: 0,
-    name: "MacBook Air 13 및 15",
-    imageName: "MacBookAir",
-    price: 1590000,
-    description: "어디서든 일하고, 즐기고, 창작할 수 있도록 해주는 놀랍도록 얇고 빠른 노트북.",
-    colors: [.midnight, .silver, .skyBlue, .starlight],
-    category: .mac
-)
-
 class DetailModalView: BaseView {
 
     // MARK: - UI Components
