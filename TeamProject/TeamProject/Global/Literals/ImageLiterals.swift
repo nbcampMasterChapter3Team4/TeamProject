@@ -115,3 +115,97 @@ enum ImageLiterals {
     }
 
 }
+
+extension ImageLiterals.Detail {
+    static func image(for product: IEProduct, color: IEColor) -> UIImage {
+        switch (product.imageName, color) {
+        case ("AirPodsMax", .blue): return airPodsMax_Blue
+        case ("AirPodsMax", .midnight): return airPodsMax_Midnight
+        case ("AirPodsMax", .orange): return airPodsMax_Orange
+        case ("AirPodsMax", .purple): return airPodsMax_Purple
+        case ("AirPodsMax", .starlight): return airPodsMax_Starlight
+
+        case ("AirPodsPro2", .white): return airPodsPro2_White
+        case ("ApplePencilPro", .white): return applePencilPro_White
+
+        case ("iMac", .blue): return iMac_Blue
+        case ("iMac", .green): return iMac_Green
+        case ("iMac", .orange): return iMac_Orange
+        case ("iMac", .pink): return iMac_Pink
+        case ("iMac", .purple): return iMac_Purple
+        case ("iMac", .silver): return iMac_Silver
+        case ("iMac", .yellow): return iMac_Yellow
+
+        case ("iPad", .blue): return iPad_Blue
+        case ("iPad", .pink): return iPad_Pink
+        case ("iPad", .silver): return iPad_Silver
+        case ("iPad", .yellow): return iPad_Yellow
+
+        case ("iPadAir", .blue): return iPadAir_Blue
+        case ("iPadAir", .purple): return iPadAir_Purple
+        case ("iPadAir", .spaceGray): return iPadAir_SpaceGray
+        case ("iPadAir", .starlight): return iPadAir_Starlight
+
+        case ("iPadMini", .blue): return iPadMini_Blue
+        case ("iPadMini", .purple): return iPadMini_Purple
+        case ("iPadMini", .spaceGray): return iPadMini_SpaceGray
+        case ("iPadMini", .starlight): return iPadMini_Starlight
+
+        case ("iPadPro", .silver): return iPadPro_Silver
+        case ("iPadPro", .spaceBlack): return iPadPro_SpaceBlack
+
+        case ("iPhone15", .black): return iPhone15_Black
+        case ("iPhone15", .blue): return iPhone15_Blue
+        case ("iPhone15", .green): return iPhone15_Green
+        case ("iPhone15", .pink): return iPhone15_Pink
+        case ("iPhone15", .yellow): return iPhone15_Yellow
+
+        case ("iPhone16", .black): return iPhone16_Black
+        case ("iPhone16", .pink): return iPhone16_Pink
+        case ("iPhone16", .teal): return iPhone16_Teal
+        case ("iPhone16", .ultramarine): return iPhone16_Ultramarine
+        case ("iPhone16", .white): return iPhone16_White
+
+        case ("iPhone16e", .black): return iPhone16e_Black
+        case ("iPhone16e", .white): return iPhone16e_White
+
+        case ("iPhone16Pro", .blackTitanium): return iPhone16Pro_BlackTitanium
+        case ("iPhone16Pro", .desertTitanium): return iPhone16Pro_DesertTitanium
+        case ("iPhone16Pro", .naturalTitanium): return iPhone16Pro_NaturalTitanium
+        case ("iPhone16Pro", .whiteTitanium): return iPhone16Pro_WhiteTitanium
+
+        case ("MacBookAir", .midnight): return macBookAir_Midnight
+        case ("MacBookAir", .silver): return macBookAir_Silver
+        case ("MacBookAir", .skyBlue): return macBookAir_SkyBlue
+        case ("MacBookAir", .starlight): return macBookAir_Starlight
+
+        case ("MacBookPro", .silver): return macBookPro_Silver
+        case ("MacBookPro", .spaceBlack): return macBookPro_SpaceBlack
+
+        case ("MacMini", .silver): return macMini_Silver
+        case ("MacPro", .silver): return macPro_Silver
+        case ("MacStudio", .silver): return macStudio_Silver
+
+        case ("MagicKeyboard", .black): return magicKeyboard_Black
+        case ("MagicKeyboard", .white): return magicKeyboard_White
+        case ("MagicMouse", .black): return magicMouse_Black
+        case ("MagicMouse", .white): return magicMouse_White
+        case ("MagicTrackpad", .black): return magicTrackpad_Black
+        case ("MagicTrackpad", .white): return magicTrackpad_White
+
+        case ("MagSafeCase", .aquamarine): return magSafeCase_Aquamarine
+        case ("MagSafeCase", .peony): return magSafeCase_Peony
+        case ("MagSafeCase", .periwinkle): return magSafeCase_Periwinkle
+        case ("MagSafeCase", .starFruit): return magSafeCase_StarFruit
+        case ("MagSafeCase", .tangerine): return magSafeCase_Tangerine
+
+        case ("StudioDisplay", .silver): return studioDisplay_Silver
+        case ("StudioDisplayXDR", .silver): return studioDisplayXDR_Silver
+
+        default:
+            assertionFailure("❗️No matching image found for \(product.imageName)_\(color.rawValue)")
+            return UIImage()
+        }
+    }
+}
+
