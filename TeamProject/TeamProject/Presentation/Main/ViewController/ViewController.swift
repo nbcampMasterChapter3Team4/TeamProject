@@ -114,19 +114,6 @@ final class ViewController: BaseViewController {
         }
     }
     
-    @objc private func showDetailModal() {
-        let detailModalVC = DetailModalViewController()
-        if let sheet = detailModalVC.sheetPresentationController {
-            sheet.detents = [
-                .custom { context in
-                    return context.maximumDetentValue * 0.75
-                }
-            ]
-            sheet.prefersGrabberVisible = true
-        }
-        self.present(detailModalVC, animated: true)
-    }
-    
     // MARK: - Methods
     
     private func setAddTarget() {

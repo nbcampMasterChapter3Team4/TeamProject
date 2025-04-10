@@ -11,6 +11,7 @@ class DetailModalViewController: BaseViewController {
     var selectedColor: IEColor? {
         didSet {
             updateUI()
+            updateCurrentValue()
         }
     }
 
@@ -38,6 +39,8 @@ class DetailModalViewController: BaseViewController {
         setDelegates()
         setRegister()
         setupColorsStackView()
+        
+        updateCurrentValue()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -48,7 +51,7 @@ class DetailModalViewController: BaseViewController {
             userInfo: nil
         )
     }
-
+    
     // MARK: - Layout Helper
 
     override func setLayout() {
@@ -89,6 +92,20 @@ class DetailModalViewController: BaseViewController {
             self?.selectedColor = newColor
         }
     }
+    
+    /// 장바구니를 불러와 detailData에 해당하는 상품이 이미 존재한다면 cartQuantity를 currentValue에 저장하는 메서드입니다,
+    private func updateCurrentValue() {
+        let shoppingCart = CoreDataManager.fetchData()
+        
+        if let dataInCart = shoppingCart.filter({
+            $0.productID == detailData?.id &&
+            $0.selectedColor == selectedColor
+        }).first {
+            currentValue = dataInCart.cartQuantity
+        } else {
+            currentValue = 1
+        }
+    }
 
     deinit {
         print("🧶 \(viewControllerName) is deinited")
@@ -116,7 +133,14 @@ extension DetailModalViewController: DetailModalViewDelegate {
             selectedColor: selectedColor ?? .aquamarine,
             cartQuantity: currentValue
         )
-        CoreDataManager.saveData(needToSaveData)
+        
+        if !CoreDataManager.updateQuantityAlreadyExist(
+            productID: needToSaveData.productID,
+            selectedColor: selectedColor ?? .aquamarine,
+            quantity: currentValue
+        ) {
+            CoreDataManager.saveData(needToSaveData)
+        }
 
         let shoppingCart = CoreDataManager.fetchData()
         /// 저장 효과 주기 위해 잠시 딜레이 추가

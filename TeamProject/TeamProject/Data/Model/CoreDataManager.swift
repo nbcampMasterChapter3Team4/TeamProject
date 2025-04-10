@@ -47,7 +47,7 @@ final class CoreDataManager {
     /// Core Data에 저장되어있는 IECart 데이터들을 IECartModel 배열로 변환 후 반환합니다.
     static func fetchData() -> [IECartModel] {
         guard let context = context else { return [] }
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "IECart")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
         
         do {
             guard let ieCartList = try context.fetch(fetchRequest) as? [IECart] else {
@@ -77,7 +77,7 @@ final class CoreDataManager {
         }
     }
     
-    /// IECartModel을 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터를 수정합니다.
+    /// IECartModel을 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터를 수정합니다.(미사용)
     static func updateData(_ ieCartModel: IECartModel) {
         guard let context = context else { return }
         
@@ -94,7 +94,7 @@ final class CoreDataManager {
         }
     }
     
-    /// IECartModel을 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터의 count를 수정합니다.
+    /// IECartModel의 UUID를 매개변수로 받아 CoreData에서 해당하는 데이터의 quantity를 수정합니다.
     static func updateQuantityData(_ ieCartModelID: UUID, _ quantity: Int) {
         guard let context = context else { return }
         
@@ -107,6 +107,31 @@ final class CoreDataManager {
         } catch {
             let msg = error.localizedDescription
             os_log("error: %@", log: log, type: .error, msg)
+        }
+    }
+    
+    /// IEProduct의 id를 매개변수로 받아 CoreData에서 해당하는 데이터의 quantity를 수정합니다.
+    @discardableResult
+    static func updateQuantityAlreadyExist(productID: Int, selectedColor: IEColor, quantity: Int) -> Bool {
+        guard let context = context else { return false }
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
+        fetchRequest.predicate = NSPredicate(format: "productID = %d AND selectedColor = %@", productID, selectedColor.rawValue)
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let object = result.first as? IECart {
+                object.selectedColor = selectedColor.rawValue
+                object.cartQuantity = Int64(quantity)
+                try context.save()
+                return true
+            } else {
+                return false
+            }
+            
+        } catch {
+            let msg = error.localizedDescription
+            os_log("error: %@", log: log, type: .error, msg)
+            return false
         }
     }
     
@@ -133,7 +158,6 @@ final class CoreDataManager {
         
         do {
             try context.execute(deleteRequest)
-            try context.save()
             print("✅ coredata 삭제 완료")
         } catch {
             let msg = error.localizedDescription
