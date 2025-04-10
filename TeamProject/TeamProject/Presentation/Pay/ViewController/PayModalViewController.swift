@@ -37,8 +37,10 @@ class PayModalViewController: BaseViewController {
         $0.alignment = .fill
         $0.distribution = .equalSpacing
     }
-
-    private let bottomButtonView = CustomBottomButton()
+    
+    private let bottomButtonView = CustomBottomButton().then {
+        $0.configure("₩0", "장바구니(0)")
+    }
 
     private let emptyStateView = ShoppingItemEmptyView()
 
@@ -46,7 +48,6 @@ class PayModalViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setBottomButton()
         setAddTarget()
         cartModels = CoreDataManager.fetchData()
         updateShoppingItemViews()
@@ -128,12 +129,6 @@ class PayModalViewController: BaseViewController {
         deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
 
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
-    }
-
-
-    // TODO: 수정해야함. 가격 부분을 CoreData에서 받아온걸 계산해서 넣어야함.
-    func setBottomButton() {
-        bottomButtonView.configure("₩190,000", "결제하기")
     }
 
     private func configureShoppingItems() {
