@@ -38,7 +38,7 @@ final class ViewController: BaseViewController {
     private let productCollectionPageView = ProductCollectionPageView()
     
     private let bottomButtonView = CustomBottomButton().then {
-        $0.configure("₩0", "결제하기")
+        $0.configure("₩0", "장바구니(0)")
     }
     
     // MARK: - Properties
@@ -51,12 +51,12 @@ final class ViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setAddTarget()
+        setNotificationCenter()
         
         productCollectionPageView.setData(allProducts: products, animated: true)
         
         // Core Data 테스트
 //        makeTestCartData()
-        
         fetchCartData()
     }
     
@@ -115,6 +115,18 @@ final class ViewController: BaseViewController {
         bottomButtonView.getRightButton().addTarget(self, action: #selector(presentToPayViewController), for: .touchUpInside)
     }
     
+    private func setNotificationCenter() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didDismissDetailNotification(_:)),
+            name: NSNotification.Name("ModalDismissNC"),
+            object: nil
+        )
+        
+        // TODO: - 아래 코드 Detail, Pay 모달 뷰 컨트롤러의 viewWillDisappear에 추가
+//        NotificationCenter.default.post(name: NSNotification.Name("ModalDismissNC"), object: nil, userInfo: nil)
+    }
+    
     // MARK: - Test Methods
     
     /// 테스트 장바구니 데이터 생성
@@ -146,6 +158,7 @@ final class ViewController: BaseViewController {
         var price = 0
         shoppingCart.forEach { price += products[$0.productID].price }
         bottomButtonView.setPrice("₩\(String(price).formattedPrice)")
+        bottomButtonView.getRightButton().setTitle("장바구니(\(shoppingCart.count))", for: .normal)
     }
     
     // MARK: - objc Methods
@@ -188,5 +201,10 @@ final class ViewController: BaseViewController {
             sheet.preferredCornerRadius = 20
         }
         present(vc, animated: true, completion: nil)
+    }
+    
+    @objc
+    private func didDismissDetailNotification(_ notification: Notification) {
+        fetchCartData()
     }
 }
