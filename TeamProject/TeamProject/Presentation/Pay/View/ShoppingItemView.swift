@@ -69,6 +69,7 @@ class ShoppingItemView: BaseView {
         $0.value = 1
     }
     
+    // MARK: - Style Helper
     
     override func setStyles() {
         backgroundColor = .clear

@@ -40,9 +40,14 @@ class PayModalViewController: BaseViewController {
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
+    
     private let popButton = UIButton().then {
-//        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
-        $0.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
+        $0.setImage(
+            UITraitCollection.current.userInterfaceStyle == .light ?
+            ImageLiterals.iCon.close_button_lightMode_ic:
+                ImageLiterals.iCon.close_button_darkMode_ic,
+            for: .normal
+        )
     }
 
     private let scrollView = UIScrollView()
@@ -55,22 +60,28 @@ class PayModalViewController: BaseViewController {
     }
 
     private let bottomButtonView = CustomBottomButton()
-    
-    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
-    private let emptyStateView = UILabel().then {
-        $0.text = "장바구니에 담은 상품이 없습니다."
-        $0.textAlignment = .center
-        $0.font = .fontGuide(.payModalEmptyLabel)
-        $0.textColor = .gray400
-        $0.isHidden = true
-    }
 
+    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
+    private let emptyStateView = ShoppingItemEmptyView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setBottomButton()
         setAddTarget()
         configureShoppingItems()
+    }
+
+    // 화면 모드 변환 탐지
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        // 이전과 현재 모드가 다를 때만 이미지 갱신
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            popButton.setImage(traitCollection.userInterfaceStyle == .light ?
+                ImageLiterals.iCon.close_button_lightMode_ic :
+                ImageLiterals.iCon.close_button_darkMode_ic
+                , for: .normal)
+        }
     }
 
     override func setStyles() {
@@ -116,10 +127,10 @@ class PayModalViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-        // TODO: 이미지 추가 후 조정필요
+
         emptyStateView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(225)
         }
 
     }
@@ -132,6 +143,8 @@ class PayModalViewController: BaseViewController {
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
 
+    
+    // TODO: 수정해야함. 가격 부분을 CoreData에서 받아온걸 계산해서 넣어야함.
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
@@ -149,10 +162,11 @@ class PayModalViewController: BaseViewController {
         }
         updateEmptyStateView()
     }
-    
+
     private func updateEmptyStateView() {
         emptyStateView.isHidden = !shoppingItemViews.isEmpty
         scrollView.isHidden = shoppingItemViews.isEmpty
+        deleteButton.isHidden = shoppingItemViews.isEmpty
     }
 
 
@@ -215,6 +229,7 @@ class PayModalViewController: BaseViewController {
 
     // MARK: - @objc Methods
 
+    // TODO: 계산식 들어가야함.
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
         guard let index = shoppingItemViews.firstIndex(where: {
