@@ -28,7 +28,14 @@ class DetailImageView: BaseView {
 
     /// View 의 Style 을 set 합니다.
     override func setStyles() {
-        backgroundColor = .gray100
+        backgroundColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .gray100
+            } else {
+                return .gray700
+            }
+        }
+            
         self.layer.cornerRadius = 10
     }
 

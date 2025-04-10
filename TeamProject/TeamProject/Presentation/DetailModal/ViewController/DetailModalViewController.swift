@@ -64,7 +64,7 @@ class DetailModalViewController: BaseViewController {
         detailView.detailImageView.updateContent(with: matchDetailProductImage(with: detailData, selectedColor: selectedColor))
         detailView.detailColorsStackView.updateContent(with: detailData.colors)
         detailView.detailInfoView.updateContents(productName: detailData.name,
-                                                 productPrice: "\(detailData.price)",
+                                                 productPrice: detailData.price,
                                                  quantity: currentValue)
     }
 
