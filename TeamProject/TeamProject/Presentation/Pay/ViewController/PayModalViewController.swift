@@ -40,6 +40,7 @@ class PayModalViewController: BaseViewController {
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
+    
     private let popButton = UIButton().then {
         $0.setImage(
             UITraitCollection.current.userInterfaceStyle == .light ?
@@ -142,6 +143,8 @@ class PayModalViewController: BaseViewController {
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
 
+    
+    // TODO: 수정해야함. 가격 부분을 CoreData에서 받아온걸 계산해서 넣어야함.
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
@@ -226,6 +229,7 @@ class PayModalViewController: BaseViewController {
 
     // MARK: - @objc Methods
 
+    // TODO: 계산식 들어가야함.
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
         guard let index = shoppingItemViews.firstIndex(where: {
