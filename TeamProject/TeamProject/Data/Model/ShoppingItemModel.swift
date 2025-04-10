@@ -8,11 +8,11 @@
 import UIKit
 
 struct ShoppingItemModel {
-    let id: UUID
-    let image: UIImage
-    let title: String
-    let description: String
-    let price: Int
-    let count: Int
-    let color: IEColor
+    let id: UUID // IECartModel ID
+    let image: UIImage // IEProduct image
+    let title: String // IEProduct image
+    let description: String // IEProduct image
+    let price: Int // IECartModel price
+    var quantity: Int // IECartModel cartQuantity
+    let color: IEColor // IECartModel selectedColor
 }
