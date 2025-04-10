@@ -12,35 +12,14 @@ import Then
 
 class PayModalViewController: BaseViewController {
 
-    // 임시데이터
-    private struct ShoppingItemModel {
-        let image: UIImage
-        let title: String
-        let description: String
-        let price: Int
-        let count: Int
-    }
-
-    // 임시데이터
-    private var shoppingItemViews: [ShoppingItemView] = {
-        let sampleItems: [ShoppingItemModel] = [
-            ShoppingItemModel(image: UIImage(), title: "iPad Air", description: "최첨단 기술이 구현하는 궁극의 iPad 경험.", price: 1900000, count: 1),
-            ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: 1200000, count: 1),
-            ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: 650000, count: 1)
-        ]
-
-        return sampleItems.map { item in
-            let view = ShoppingItemView()
-            view.configure(item.image, item.title, item.description, item.price, item.count)
-            return view
-        }
-    }()
-
-
+    private var cartModels: [IECartModel] = []
+    private var shoppingItems: [ShoppingItemModel] = []
+    private var shoppingItemViews: [ShoppingItemView] = []
+    
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
-    
+
     private let popButton = UIButton().then {
         $0.setImage(
             UITraitCollection.current.userInterfaceStyle == .light ?
@@ -61,14 +40,18 @@ class PayModalViewController: BaseViewController {
 
     private let bottomButtonView = CustomBottomButton()
 
-    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
     private let emptyStateView = ShoppingItemEmptyView()
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setBottomButton()
         setAddTarget()
+        cartModels = CoreDataManager.fetchData()
+        updateShoppingItemViews()
         configureShoppingItems()
+        
     }
 
     // 화면 모드 변환 탐지
@@ -78,11 +61,13 @@ class PayModalViewController: BaseViewController {
         // 이전과 현재 모드가 다를 때만 이미지 갱신
         if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             popButton.setImage(traitCollection.userInterfaceStyle == .light ?
-                ImageLiterals.iCon.close_button_lightMode_ic :
-                ImageLiterals.iCon.close_button_darkMode_ic
+                ImageLiterals.iCon.close_button_lightMode_ic:
+                    ImageLiterals.iCon.close_button_darkMode_ic
                 , for: .normal)
         }
     }
+
+    // MARK: - Style Helper
 
     override func setStyles() {
         view.backgroundColor = UIColor { traitCollection in
@@ -93,6 +78,8 @@ class PayModalViewController: BaseViewController {
             }
         }
     }
+    
+    // MARK: - Layout Helper
 
     override func setLayout() {
         view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView, emptyStateView)
@@ -143,7 +130,7 @@ class PayModalViewController: BaseViewController {
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
 
-    
+
     // TODO: 수정해야함. 가격 부분을 CoreData에서 받아온걸 계산해서 넣어야함.
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
@@ -163,20 +150,60 @@ class PayModalViewController: BaseViewController {
         updateEmptyStateView()
     }
 
+    // MARK: - Update Methods
+    
+    
+    // MARK: - Update EmptyView Method
+    
     private func updateEmptyStateView() {
         emptyStateView.isHidden = !shoppingItemViews.isEmpty
         scrollView.isHidden = shoppingItemViews.isEmpty
         deleteButton.isHidden = shoppingItemViews.isEmpty
     }
 
+    // MARK: - Update About ShoppintgItems Method
+    
+    private func updateShoppingItems() {
+        shoppingItems = cartModels.compactMap { cartModel in
+            if let dataIndex = products.firstIndex(where: { $0.id == cartModel.productID }) {
+                let data = products[dataIndex]
+                if let image = UIImage(named: data.imageName) {
+                    return ShoppingItemModel(
+                        id: cartModel.id,
+                        image: image,
+                        title: data.name,
+                        description: data.description,
+                        price: data.price,
+                        count: cartModel.cartQuantity,
+                        color: cartModel.selectedColor
+                    )
+                }
+            }
+            return nil
+        }
+        _ = shoppingItems.map { print($0) }
+    }
 
+    private func updateShoppingItemViews() {
+        
+        updateShoppingItems()
+        
+        shoppingItemViews = shoppingItems.map { item in
+            let view = ShoppingItemView()
+            view.configure(item.image, item.title, item.description, item.price, item.count)
+            return view
+        }
+    }
+    
+    
     // MARK: - RemoveItem Methods
 
-    private func removeItemView(at index: Int) {
+    private func removeItemView(at index: Int, from id: UUID) {
         let itemView = shoppingItemViews[index]
         stackView.removeArrangedSubview(itemView)
         itemView.removeFromSuperview()
         shoppingItemViews.remove(at: index)
+        CoreDataManager.deleteData(id: id)
         updateEmptyStateView()
     }
 
@@ -191,16 +218,22 @@ class PayModalViewController: BaseViewController {
 
     // MARK: - Alert Methods
 
-    private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
+    private func alertForZeroItem(to titleLabel: String, for index: Int, from id: UUID, stepper: UIStepper) {
         let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
-            self.removeItemView(at: index)
+            self.removeItemView(at: index, from: id)
+            // Noti 추가
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ModalDismissNC"),
+                object: nil,
+                userInfo: nil
+            )
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
             print("alertForZeroItem 취소 버튼 눌림")
             stepper.value = 1
-            self.shoppingItemViews[index].getItemCountLabel().text = "1"
+            self.shoppingItemViews[index].getItemCountLabel().text = "수량: 1개"
         }
 
         showAlert(
@@ -215,7 +248,7 @@ class PayModalViewController: BaseViewController {
         let okAction = makeAlertAction(title: "확인") { _ in
             print("alertForOverItem 확인 버튼 눌림")
             stepper.value = 10
-            self.shoppingItemViews[index].getItemCountLabel().text = "10"
+            self.shoppingItemViews[index].getItemCountLabel().text = "수량: 10개"
         }
 
         showAlert(
@@ -241,14 +274,13 @@ class PayModalViewController: BaseViewController {
 
         if currentValue == .zero {
             if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
-                alertForZeroItem(to: currentItemTitleLabel, for: index, stepper: sender)
+                alertForZeroItem(to: currentItemTitleLabel, for: index, from: shoppingItems[index].id, stepper: sender)
             }
         } else if currentValue > 10 {
             alertForOverItem(for: index, stepper: sender)
         } else {
-            itemView.getItemCountLabel().text = "\(currentValue)"
+            itemView.getItemCountLabel().text = "수량: \(currentValue)개"
         }
-
     }
 
 
@@ -266,6 +298,12 @@ class PayModalViewController: BaseViewController {
             self.removeAllItems()
             self.updateEmptyStateView()
             CoreDataManager.deleteAllData()
+            // Noti 추가
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ModalDismissNC"),
+                object: nil,
+                userInfo: nil
+            )
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
