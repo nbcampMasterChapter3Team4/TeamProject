@@ -7,7 +7,7 @@ class DetailModalViewController: BaseViewController {
 
     // MARK: - Properties
 
-    var detailData: IEProduct? = mockUpData
+    var detailData: IEProduct?
     var selectedColor: IEColor? {
         didSet {
             updateUI()
@@ -71,7 +71,6 @@ class DetailModalViewController: BaseViewController {
             return
         }
         detailView.detailImageView.updateContent(with: matchDetailProductImage(with: detailData, selectedColor: selectedColor))
-        detailView.detailColorsStackView.updateContent(with: detailData.colors)
         detailView.detailInfoView.updateContents(productName: detailData.name,
                                                  productPrice: detailData.price,
                                                  quantity: currentValue)

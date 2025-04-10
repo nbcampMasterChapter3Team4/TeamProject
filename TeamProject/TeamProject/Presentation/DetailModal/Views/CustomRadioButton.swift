@@ -14,7 +14,6 @@ class CustomRadioButton: BaseView {
     private let radioBorderView = UIView().then {
         $0.backgroundColor = .clear
         $0.layer.borderWidth = 2
-        //$0.layer.borderColor = UIColor.black100.cgColor
     }
     
     // MARK: - Properties
