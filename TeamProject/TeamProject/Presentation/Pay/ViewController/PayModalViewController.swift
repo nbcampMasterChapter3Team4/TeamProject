@@ -41,8 +41,12 @@ class PayModalViewController: BaseViewController {
 
     private let deleteButton = DeleteButton()
     private let popButton = UIButton().then {
-//        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
-        $0.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
+        $0.setImage(
+            UITraitCollection.current.userInterfaceStyle == .light ?
+            ImageLiterals.iCon.close_button_lightMode_ic:
+                ImageLiterals.iCon.close_button_darkMode_ic,
+            for: .normal
+        )
     }
 
     private let scrollView = UIScrollView()
@@ -55,7 +59,7 @@ class PayModalViewController: BaseViewController {
     }
 
     private let bottomButtonView = CustomBottomButton()
-    
+
     // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
     private let emptyStateView = UILabel().then {
         $0.text = "장바구니에 담은 상품이 없습니다."
@@ -71,6 +75,19 @@ class PayModalViewController: BaseViewController {
         setBottomButton()
         setAddTarget()
         configureShoppingItems()
+    }
+
+    // 화면 모드 변환 탐지
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        // 이전과 현재 모드가 다를 때만 이미지 갱신
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            popButton.setImage(traitCollection.userInterfaceStyle == .light ?
+                ImageLiterals.iCon.close_button_lightMode_ic :
+                ImageLiterals.iCon.close_button_darkMode_ic
+                , for: .normal)
+        }
     }
 
     override func setStyles() {
@@ -149,7 +166,7 @@ class PayModalViewController: BaseViewController {
         }
         updateEmptyStateView()
     }
-    
+
     private func updateEmptyStateView() {
         emptyStateView.isHidden = !shoppingItemViews.isEmpty
         scrollView.isHidden = shoppingItemViews.isEmpty
