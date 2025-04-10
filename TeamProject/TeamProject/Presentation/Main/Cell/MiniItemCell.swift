@@ -79,7 +79,7 @@ final class MiniItemCell: BaseCollectionViewCell {
             let imageSize = miniItemImageView.image?.size
             if imageSize?.width ?? 0 >= imageSize?.height ?? 0 {
                 // 너비가 길면 너비 기준 높이 설정
-                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
+                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.55 : 0.65)
                 $0.height.equalTo(miniItemImageView.snp.width).multipliedBy(1)
             } else {
                 // 높이가 길면 높이 기준 너비 설정
