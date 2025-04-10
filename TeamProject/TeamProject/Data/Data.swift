@@ -154,7 +154,7 @@ let products: [IEProduct] = [
     ),
     IEProduct(
         id: 16,
-        name: "MagSafe형 iPhone 16 Pro 실리콘 케이스",
+        name: "iPhone 16 Pro 실리콘 케이스",
         imageName: "MagSafeCase",
         price: 69000,
         description: "",

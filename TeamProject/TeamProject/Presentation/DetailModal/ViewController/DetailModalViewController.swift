@@ -61,7 +61,7 @@ class DetailModalViewController: BaseViewController {
         guard let detailData = detailData, let selectedColor = selectedColor else {
             return
         }
-        detailView.detailImageView.updateContent(with: matchDetailProductImage(with: mockUpData, selectedColor: selectedColor))
+        detailView.detailImageView.updateContent(with: matchDetailProductImage(with: detailData, selectedColor: selectedColor))
         detailView.detailColorsStackView.updateContent(with: detailData.colors)
         detailView.detailInfoView.updateContents(productName: detailData.name,
                                                  productPrice: "\(detailData.price)",
