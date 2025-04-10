@@ -39,7 +39,7 @@ class PayModalViewController: BaseViewController {
     }
     
     private let bottomButtonView = CustomBottomButton().then {
-        $0.configure("₩0", "장바구니(0)")
+        $0.configure("₩0", "결제하기")
     }
 
     private let emptyStateView = ShoppingItemEmptyView()
