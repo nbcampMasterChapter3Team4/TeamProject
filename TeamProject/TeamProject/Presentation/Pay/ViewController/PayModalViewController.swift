@@ -55,6 +55,16 @@ class PayModalViewController: BaseViewController {
     }
 
     private let bottomButtonView = CustomBottomButton()
+    
+    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
+    private let emptyStateView = UILabel().then {
+        $0.text = "장바구니에 담은 상품이 없습니다."
+        $0.textAlignment = .center
+        $0.font = .fontGuide(.payModalEmptyLabel)
+        $0.textColor = .gray400
+        $0.isHidden = true
+    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +84,7 @@ class PayModalViewController: BaseViewController {
     }
 
     override func setLayout() {
-        view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView)
+        view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView, emptyStateView)
         scrollView.addSubview(stackView)
 
         deleteButton.snp.makeConstraints {
@@ -106,6 +116,12 @@ class PayModalViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+        // TODO: 이미지 추가 후 조정필요
+        emptyStateView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+        }
+
     }
 
     // MARK: - Methods
@@ -120,9 +136,6 @@ class PayModalViewController: BaseViewController {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
 
-
-    // MARK: - Methods
-
     private func configureShoppingItems() {
         for itemView in shoppingItemViews {
             itemView.snp.makeConstraints {
@@ -134,7 +147,14 @@ class PayModalViewController: BaseViewController {
 
             stackView.addArrangedSubview(itemView)
         }
+        updateEmptyStateView()
     }
+    
+    private func updateEmptyStateView() {
+        emptyStateView.isHidden = !shoppingItemViews.isEmpty
+        scrollView.isHidden = shoppingItemViews.isEmpty
+    }
+
 
     // MARK: - RemoveItem Methods
 
@@ -143,6 +163,7 @@ class PayModalViewController: BaseViewController {
         stackView.removeArrangedSubview(itemView)
         itemView.removeFromSuperview()
         shoppingItemViews.remove(at: index)
+        updateEmptyStateView()
     }
 
     private func removeAllItems() {
@@ -151,6 +172,7 @@ class PayModalViewController: BaseViewController {
             itemView.removeFromSuperview()
         }
         shoppingItemViews.removeAll()
+        updateEmptyStateView()
     }
 
     // MARK: - Alert Methods
@@ -159,13 +181,6 @@ class PayModalViewController: BaseViewController {
         let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
             self.removeItemView(at: index)
-            if self.shoppingItemViews.isEmpty {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.dismiss(animated: true) {
-                        print("모든 아이템이 삭제되어 모달 닫힘")
-                    }
-                }
-            }
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
@@ -234,9 +249,7 @@ class PayModalViewController: BaseViewController {
         let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForDeleteAllItems 확인 버튼 눌림")
             self.removeAllItems()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.popModal()
-            }
+            self.updateEmptyStateView()
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
