@@ -94,6 +94,22 @@ final class CoreDataManager {
         }
     }
     
+    /// IECartModel을 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터의 count를 수정합니다.
+    static func updateCountData(_ ieCartModelID: UUID, _ count: Int) {
+        guard let context = context else { return }
+        
+        do {
+            if let object = fetchEntity(id: ieCartModelID) {
+                object.cartQuantity = Int64(count)
+            }
+            try context.save()
+            
+        } catch {
+            let msg = error.localizedDescription
+            os_log("error: %@", log: log, type: .error, msg)
+        }
+    }
+    
     /// UUID를 매개변수로 받아 CoreData에서 해당하는 UUID의 데이터를 삭제합니다.
     static func deleteData(id: UUID) {
         guard let context = context else { return }
