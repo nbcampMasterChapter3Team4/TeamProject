@@ -25,6 +25,24 @@ class CustomRadioButton: BaseView {
         radioBorderView.layer.cornerRadius = radioBorderView.bounds.width / 2
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        guard let previous = previousTraitCollection,
+              previous.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        
+        if radioBorderView.layer.borderColor != UIColor.blue200.cgColor {
+            let borderColor = UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .light {
+                    return .black100
+                } else {
+                    return .white200
+                }
+            }
+            radioBorderView.layer.borderColor = borderColor.cgColor
+        }
+    }
+    
     override func setStyles() {
         self.backgroundColor = .clear
     }
@@ -54,7 +72,18 @@ class CustomRadioButton: BaseView {
     
     func setSelected(_ isSelected: Bool) {
         print(isSelected)
-        radioBorderView.layer.borderColor = isSelected ? UIColor.blue200.cgColor : UIColor.black100.cgColor
+        if isSelected {
+            radioBorderView.layer.borderColor = UIColor.blue200.cgColor
+        } else {
+            let borderColor = UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .light {
+                    return .black100
+                } else {
+                    return .white200
+                }
+            }
+            radioBorderView.layer.borderColor = borderColor.cgColor
+        }
     }
 
     func getRadioButton() -> UIButton {
