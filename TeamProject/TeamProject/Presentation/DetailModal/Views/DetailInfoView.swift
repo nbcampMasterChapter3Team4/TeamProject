@@ -42,7 +42,6 @@ class DetailInfoView: BaseView {
         super.init(frame: frame)
         setupLayout()
         bindActions()
-
     }
 
     required init?(coder: NSCoder) {

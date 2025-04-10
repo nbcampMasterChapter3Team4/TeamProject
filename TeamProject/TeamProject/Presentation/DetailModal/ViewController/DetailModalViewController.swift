@@ -57,6 +57,7 @@ class DetailModalViewController: BaseViewController {
 
     override func setDelegates() {
         detailInfoView.delegate = self
+        detailView.delegate = self
     }
 
     func updateUI() {
@@ -101,5 +102,21 @@ extension DetailModalViewController: DetailInfoViewDelegate {
     func detailInfoViewDidTapPlus(_ detailInfoView: DetailInfoView) {
         guard currentValue < 10 else { return }
         currentValue += 1
+    }
+}
+
+extension DetailModalViewController: DetailModalViewDelegate {
+    func detailModalViewDidTapCart(_ detailModalView: DetailModalView) {
+        guard let product = detailData else { return }
+        let needToSaveData = IECartModel(
+            id: UUID(),
+            productID: product.id,
+            selectedColor: selectedColor ?? .aquamarine,
+            cartQuantity: currentValue
+        )
+        CoreDataManager.saveData(needToSaveData)
+
+        let shoppingCart = CoreDataManager.fetchData()
+        print(shoppingCart)
     }
 }

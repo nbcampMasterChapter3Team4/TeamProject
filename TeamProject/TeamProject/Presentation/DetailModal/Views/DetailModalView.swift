@@ -29,18 +29,7 @@ class DetailModalView: BaseView {
         $0.layer.cornerRadius = 20
     }
 
-    // MARK: - Initializer
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setLayout()
-        setStyles()
-    }
-
-    override func removeFromSuperview() {
-        super.removeFromSuperview()
-        print("🧵 \(viewName) has been successfully Removed")
-    }
+    weak var delegate: DetailModalViewDelegate?
 
     /// View의 Style을 set 합니다.
     override func setStyles() {
@@ -76,9 +65,11 @@ class DetailModalView: BaseView {
             $0.top.equalTo(detailInfoView.snp.bottom).offset(23)
             $0.height.equalTo(44)
         }
+
+        cartButton.addTarget(self, action: #selector(didTapCart), for: .touchUpInside)
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc private func didTapCart() {
+        delegate?.detailModalViewDidTapCart(self)
     }
 }
