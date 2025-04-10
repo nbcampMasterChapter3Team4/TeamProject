@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Then
 
-class ProductCollectionPageView: BaseView {
+final class ProductCollectionPageView: BaseView {
     
     // MARK: - UI Components
 

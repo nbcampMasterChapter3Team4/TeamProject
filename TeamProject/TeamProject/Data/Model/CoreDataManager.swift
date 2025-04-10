@@ -32,7 +32,7 @@ final class CoreDataManager {
         
         let object = IECart(entity: entity, insertInto: context)
         object.id = ieCartModel.id
-//        object.product = ieCartModel.productID
+//        object.productID = Int64(ieCartModel.productID)
         object.selectedColor = ieCartModel.selectedColor.rawValue
         object.cartQuantity = Int64(ieCartModel.cartQuantity)
         
@@ -103,6 +103,21 @@ final class CoreDataManager {
                 context.delete(object)
                 try context.save()
             }
+            
+        } catch {
+            let msg = error.localizedDescription
+            os_log("error: %@", log: log, type: .error, msg)
+        }
+    }
+    
+    static func deleteAllData() {
+        guard let context = context else { return }
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
             
         } catch {
             let msg = error.localizedDescription
