@@ -56,6 +56,15 @@ class PayModalViewController: BaseViewController {
         configureShoppingItems()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ModalDismissNC"),
+            object: nil,
+            userInfo: nil
+        )
+    }
+    
     // 화면 모드 변환 탐지
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -230,13 +239,6 @@ class PayModalViewController: BaseViewController {
             self.updatePredictPrice()
 
             CoreDataManager.deleteData(id: id)
-
-            // Noti 추가
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ModalDismissNC"),
-                object: nil,
-                userInfo: nil
-            )
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
@@ -289,7 +291,7 @@ class PayModalViewController: BaseViewController {
             alertForOverItem(for: index, stepper: sender)
         } else {
             itemView.getItemCountLabel().text = "수량: \(currentValue)개"
-            CoreDataManager.updateCountData(cartModelID, currentValue)
+            CoreDataManager.updateQuantityData(cartModelID, currentValue)
             shoppingItems[index].quantity = currentValue
         }
         updatePredictPrice()
@@ -310,12 +312,6 @@ class PayModalViewController: BaseViewController {
             self.removeAllItems()
             self.updatePredictPrice()
             CoreDataManager.deleteAllData()
-            // Noti 추가
-            NotificationCenter.default.post(
-                name: NSNotification.Name("ModalDismissNC"),
-                object: nil,
-                userInfo: nil
-            )
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
