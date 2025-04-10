@@ -100,7 +100,7 @@ enum ImageLiterals {
         static var magSafeCase_StarFruit: UIImage { .load(name: "MagSafeCase_StarFruit").withRenderingMode(.alwaysOriginal)}
         static var magSafeCase_Tangerine: UIImage { .load(name: "MagSafeCase_Tangerine").withRenderingMode(.alwaysOriginal)}
         static var studioDisplay_Silver: UIImage { .load(name: "StudioDisplay_Silver").withRenderingMode(.alwaysOriginal)}
-        static var studioDisplayXDR_Silver: UIImage { .load(name: "StudioDisplayXDR_Silver").withRenderingMode(.alwaysOriginal)}
+        static var proDisplayXDR_Silver: UIImage { .load(name: "ProDisplayXDR_Silver").withRenderingMode(.alwaysOriginal)}
     }
     
     enum iCon {
@@ -201,7 +201,7 @@ extension ImageLiterals.Detail {
         case ("MagSafeCase", .tangerine): return magSafeCase_Tangerine
 
         case ("StudioDisplay", .silver): return studioDisplay_Silver
-        case ("StudioDisplayXDR", .silver): return studioDisplayXDR_Silver
+        case ("ProDisplayXDR", .silver): return proDisplayXDR_Silver
 
         default:
             assertionFailure("❗️No matching image found for \(product.imageName)_\(color.rawValue)")
