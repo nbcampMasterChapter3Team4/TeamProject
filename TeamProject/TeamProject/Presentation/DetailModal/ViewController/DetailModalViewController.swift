@@ -39,6 +39,15 @@ class DetailModalViewController: BaseViewController {
         setRegister()
         setupColorsStackView()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ModalDismissNC"),
+            object: nil,
+            userInfo: nil
+        )
+    }
 
     // MARK: - Layout Helper
 
