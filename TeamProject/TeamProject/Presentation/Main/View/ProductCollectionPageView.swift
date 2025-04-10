@@ -28,7 +28,6 @@ class ProductCollectionPageView: BaseView {
     private let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
     private let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
     
-    private var pageCount: Int = 0
     enum Section: Hashable {
         case page(Int)
     }
@@ -200,10 +199,9 @@ private extension ProductCollectionPageView {
     func reloadData(animated: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         
-        for items in sectionItems {
+        for (pageCount, items) in sectionItems.enumerated() {
             snapshot.appendSections([.page(pageCount)])
             snapshot.appendItems(items, toSection: .page(pageCount))
-            pageCount += 1
         }
         
         dataSource.apply(snapshot, animatingDifferences: animated)
