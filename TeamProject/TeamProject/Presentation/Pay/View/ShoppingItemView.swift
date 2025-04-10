@@ -120,6 +120,7 @@ class ShoppingItemView: BaseView {
         itemDescriptionLabel.text = description
         itemPriceLabel.text = "₩\(price.formattedPrice)"
         itemCountLabel.text = "수량: \(itemCount)개"
+        itemCountStepper.value = Double(itemCount)
     }
     
     /// PayModal VC에서 Stepper를 접근하기 위함
