@@ -33,7 +33,13 @@ class DetailModalView: BaseView {
 
     /// View의 Style을 set 합니다.
     override func setStyles() {
-        self.backgroundColor = .white200
+        self.backgroundColor =  UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .white200
+            } else {
+                return .black100
+            }
+        }
     }
 
     // MARK: - Layout Helper
