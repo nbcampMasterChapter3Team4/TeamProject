@@ -30,7 +30,15 @@ class ViewController: BaseViewController {
         $0.insertSegment(withTitle: "ACC", at: 4, animated: true)
         $0.selectedSegmentIndex = 0
     }
-    
+
+    // TODO: - 삭제하기
+
+    private let demoButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Demo", for: .normal)
+        return button
+    }()
+
 //    private let collectionView = UICollectionView()
     
     // MARK: - Properties
@@ -60,11 +68,32 @@ class ViewController: BaseViewController {
             $0.top.equalTo(self.view.safeAreaLayoutGuide).inset(10)
             $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(16)
         }
-        
+
+        // TODO: - 모달 연결 임시 버튼 추후 삭제
+        self.view.addSubview(demoButton)
+        demoButton.snp.makeConstraints {
+            $0.top.equalTo(segmentedControl.snp.bottom).offset(28)
+            $0.centerX.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        demoButton.addTarget(self, action: #selector(showDetailModal), for: .touchUpInside)
+
 //        collectionView.snp.makeConstraints {
 //            $0.top.equalTo(segmentedControl.snp.bottom).offset(28)
 //            $0.leading.trailing.equalTo(self.view.safeAreaLayoutGuide).inset(12)
 //        }
+    }
+
+    @objc private func showDetailModal() {
+        let detailModalVC = DetailModalViewController()
+        if let sheet = detailModalVC.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    return context.maximumDetentValue * 0.72
+                }
+            ]
+            sheet.prefersGrabberVisible = true
+        }
+        self.present(detailModalVC, animated: true)
     }
 }
 
