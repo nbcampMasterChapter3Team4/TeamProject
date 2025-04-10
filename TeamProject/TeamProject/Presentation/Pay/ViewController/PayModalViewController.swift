@@ -61,14 +61,7 @@ class PayModalViewController: BaseViewController {
     private let bottomButtonView = CustomBottomButton()
 
     // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
-    private let emptyStateView = UILabel().then {
-        $0.text = "장바구니에 담은 상품이 없습니다."
-        $0.textAlignment = .center
-        $0.font = .fontGuide(.payModalEmptyLabel)
-        $0.textColor = .gray400
-        $0.isHidden = true
-    }
-
+    private let emptyStateView = ShoppingItemEmptyView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -133,10 +126,10 @@ class PayModalViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-        // TODO: 이미지 추가 후 조정필요
+
         emptyStateView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(225)
         }
 
     }
@@ -170,6 +163,7 @@ class PayModalViewController: BaseViewController {
     private func updateEmptyStateView() {
         emptyStateView.isHidden = !shoppingItemViews.isEmpty
         scrollView.isHidden = shoppingItemViews.isEmpty
+        deleteButton.isHidden = shoppingItemViews.isEmpty
     }
 
 
