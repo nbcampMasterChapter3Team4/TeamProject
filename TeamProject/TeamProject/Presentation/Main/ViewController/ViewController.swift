@@ -131,7 +131,7 @@ class ViewController: BaseViewController {
         if let sheet = detailModalVC.sheetPresentationController {
             sheet.detents = [
                 .custom { context in
-                    return context.maximumDetentValue * 0.72
+                    return context.maximumDetentValue * 0.75
                 }
             ]
             sheet.prefersGrabberVisible = true

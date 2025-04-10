@@ -14,11 +14,18 @@ class DetailModalViewController: BaseViewController {
         }
     }
 
+    private var currentValue: Int = 1 {
+        didSet {
+            updateInfoView()
+        }
+    }
+
     // MARK: - UI Components
 
     private lazy var viewControllerName = self.className
     private let detailView = DetailModalView()
     private let colorsStackView = DetailColorsStackView()
+    private let detailInfoView = DetailInfoView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,11 +39,12 @@ class DetailModalViewController: BaseViewController {
         updateUI()
         setDelegates()
         setRegister()
+        updateInfoView()
         setupColorsStackView()
     }
 
-
     // MARK: - Layout Helper
+
     override func setLayout() {
         view.addSubviews(detailView)
 
@@ -44,8 +52,12 @@ class DetailModalViewController: BaseViewController {
             $0.edges.equalToSuperview()
         }
     }
-    
+
     // MARK: - Methods
+
+    override func setDelegates() {
+        detailInfoView.delegate = self
+    }
 
     func updateUI() {
         guard let detailData = detailData, let selectedColor = selectedColor else {
@@ -63,12 +75,31 @@ class DetailModalViewController: BaseViewController {
     private func setupColorsStackView() {
         let availableColors: [IEColor] = detailData?.colors ?? [.silver]
         detailView.detailColorsStackView.updateContent(with: availableColors)
+        detailView.detailColorsStackView.updateContent(with: availableColors)
         detailView.detailColorsStackView.colorSelectedHandler = { [weak self] newColor in
             self?.selectedColor = newColor
         }
     }
 
+    private func updateInfoView() {
+        detailInfoView.updateContents(productName: detailData?.name ?? "123",
+                                      productPrice: "\(detailData?.price ?? 0)",
+                                      quantity: currentValue)
+    }
+
     deinit {
         print("🧶 \(viewControllerName) is deinited")
+    }
+}
+
+extension DetailModalViewController: DetailInfoViewDelegate {
+    func detailInfoViewDidTapMinus(_ detailInfoView: DetailInfoView) {
+        guard currentValue > 0 else { return }
+        currentValue -= 1
+    }
+
+    func detailInfoViewDidTapPlus(_ detailInfoView: DetailInfoView) {
+        guard currentValue < 10 else { return }
+        currentValue += 1
     }
 }
