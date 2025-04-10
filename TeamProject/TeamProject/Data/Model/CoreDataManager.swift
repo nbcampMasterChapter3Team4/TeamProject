@@ -118,7 +118,7 @@ final class CoreDataManager {
         do {
             try context.execute(deleteRequest)
             try context.save()
-            
+            print("✅ coredata 삭제 완료")
         } catch {
             let msg = error.localizedDescription
             os_log("error: %@", log: log, type: .error, msg)

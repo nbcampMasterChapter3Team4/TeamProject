@@ -265,6 +265,7 @@ class PayModalViewController: BaseViewController {
             print("alertForDeleteAllItems 확인 버튼 눌림")
             self.removeAllItems()
             self.updateEmptyStateView()
+            CoreDataManager.deleteAllData()
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
