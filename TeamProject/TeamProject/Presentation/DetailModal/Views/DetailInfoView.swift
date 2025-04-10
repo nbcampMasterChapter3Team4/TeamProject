@@ -7,12 +7,10 @@ class DetailInfoView: BaseView {
     // MARK: - UI Components
 
     private let productNameLabel: UILabel = UILabel().then {
-        $0.text = "iPhone 16 Pro Max"
         $0.font = UIFont.systemFont(ofSize: 18, weight: .bold)
     }
 
     private let productPriceLabel: UILabel = UILabel().then {
-        $0.text = "₩1,900,000부터"
         $0.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
     }
 
@@ -38,17 +36,7 @@ class DetailInfoView: BaseView {
 
     weak var delegate: DetailInfoViewDelegate?
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupLayout()
-        bindActions()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupLayout() {
+    override func setLayout() {
         addSubviews(productNameLabel, productPriceLabel, minusButton, quantityLabel, plusButton)
 
         productNameLabel.snp.makeConstraints {
@@ -79,20 +67,16 @@ class DetailInfoView: BaseView {
             $0.left.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-    }
 
-    // MARK: - Action Binding
-
-    private func bindActions() {
         minusButton.addTarget(self, action: #selector(didTapMinus), for: .touchUpInside)
         plusButton.addTarget(self, action: #selector(didTapPlus), for: .touchUpInside)
+
     }
 
     // MARK: - @objc
 
     @objc private func didTapMinus() {
         delegate?.detailInfoViewDidTapMinus(self)
-        print("-")
     }
 
     @objc private func didTapPlus() {

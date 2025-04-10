@@ -16,7 +16,7 @@ class DetailModalViewController: BaseViewController {
 
     private var currentValue: Int = 1 {
         didSet {
-            updateInfoView()
+            updateUI()
         }
     }
 
@@ -24,8 +24,6 @@ class DetailModalViewController: BaseViewController {
 
     private lazy var viewControllerName = self.className
     private let detailView = DetailModalView()
-    private let colorsStackView = DetailColorsStackView()
-    private let detailInfoView = DetailInfoView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +37,6 @@ class DetailModalViewController: BaseViewController {
         updateUI()
         setDelegates()
         setRegister()
-        updateInfoView()
         setupColorsStackView()
     }
 
@@ -56,7 +53,7 @@ class DetailModalViewController: BaseViewController {
     // MARK: - Methods
 
     override func setDelegates() {
-        detailInfoView.delegate = self
+        detailView.detailInfoView.delegate = self
         detailView.delegate = self
     }
 
@@ -64,8 +61,11 @@ class DetailModalViewController: BaseViewController {
         guard let detailData = detailData, let selectedColor = selectedColor else {
             return
         }
-        detailView.detailImageView.updateContent(with: matchDetailProductImage(with: mockUpData, selectedColor: selectedColor))
+        detailView.detailImageView.updateContent(with: matchDetailProductImage(with: detailData, selectedColor: selectedColor))
         detailView.detailColorsStackView.updateContent(with: detailData.colors)
+        detailView.detailInfoView.updateContents(productName: detailData.name,
+                                                 productPrice: "\(detailData.price)",
+                                                 quantity: currentValue)
     }
 
     func matchDetailProductImage(with product: IEProduct, selectedColor: IEColor) -> String {
@@ -80,12 +80,6 @@ class DetailModalViewController: BaseViewController {
         detailView.detailColorsStackView.colorSelectedHandler = { [weak self] newColor in
             self?.selectedColor = newColor
         }
-    }
-
-    private func updateInfoView() {
-        detailInfoView.updateContents(productName: detailData?.name ?? "123",
-                                      productPrice: "\(detailData?.price ?? 0)",
-                                      quantity: currentValue)
     }
 
     deinit {

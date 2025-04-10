@@ -13,15 +13,6 @@ import Then
 final class ViewController: BaseViewController {
         
     // MARK: - UI Components
-
-
-    // TODO: - 삭제하기
-
-    private let demoButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Demo", for: .normal)
-        return button
-    }()
     
     private let segmentedControl = UISegmentedControl(
         items: IECategory.allCases.map { $0.title }).then {
@@ -105,15 +96,6 @@ final class ViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
-
-        // TODO: - 모달 연결 임시 버튼 추후 삭제
-               self.view.addSubview(demoButton)
-               demoButton.snp.makeConstraints {
-                   $0.top.equalTo(segmentedControl.snp.bottom).offset(28)
-                   $0.centerX.equalTo(self.view.safeAreaLayoutGuide)
-               }
-               demoButton.addTarget(self, action: #selector(showDetailModal), for: .touchUpInside)
-
     }
 
     @objc private func showDetailModal() {
