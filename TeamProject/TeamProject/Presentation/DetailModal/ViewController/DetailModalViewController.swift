@@ -137,8 +137,7 @@ extension DetailModalViewController: DetailModalViewDelegate {
         if !CoreDataManager.updateQuantityAlreadyExist(
             productID: needToSaveData.productID,
             selectedColor: selectedColor ?? .aquamarine,
-            quantity: currentValue
-        ) {
+            quantity: currentValue) {
             CoreDataManager.saveData(needToSaveData)
         }
 

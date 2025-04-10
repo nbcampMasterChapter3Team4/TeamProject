@@ -111,7 +111,6 @@ final class CoreDataManager {
     }
     
     /// IEProduct의 id를 매개변수로 받아 CoreData에서 해당하는 데이터의 quantity를 수정합니다.
-    @discardableResult
     static func updateQuantityAlreadyExist(productID: Int, selectedColor: IEColor, quantity: Int) -> Bool {
         guard let context = context else { return false }
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "IECart")
