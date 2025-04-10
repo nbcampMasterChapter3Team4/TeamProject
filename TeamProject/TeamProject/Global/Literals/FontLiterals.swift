@@ -50,8 +50,8 @@ extension FontLiterals {
         case .detailModalItemTitle: return 18
         case .detailModalItemPrice: return 13
             
-        case .payModalItemTitle: return 20
-        case .payModalItemDesc: return 14
+        case .payModalItemTitle: return 16
+        case .payModalItemDesc: return 11
         case .payModalDeleteLabel: return 10
         case .payModalItemPrice: return 12
         case .payModalEmptyLabel: return 15

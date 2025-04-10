@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 final class ViewController: BaseViewController {
-        
+    
     // MARK: - UI Components
     
     private let segmentedControl = UISegmentedControl(
@@ -23,6 +23,13 @@ final class ViewController: BaseViewController {
                     return .gray600
                 }
             }
+            $0.selectedSegmentTintColor = UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .light {
+                    return .white200
+                } else {
+                    return .blue200
+                }
+            }
             $0.setTitleTextAttributes(
                 [.foregroundColor:
                     UIColor { traitCollection in
@@ -32,6 +39,15 @@ final class ViewController: BaseViewController {
                             return .white200
                         }
                     }], for: .normal)
+            $0.setTitleTextAttributes(
+                [.foregroundColor:
+                    UIColor { traitCollection in
+                        if traitCollection.userInterfaceStyle == .light {
+                            return .blue200
+                        } else {
+                            return .white200
+                        }
+                    }], for: .selected)
             $0.selectedSegmentIndex = 0
         }
     
@@ -59,7 +75,7 @@ final class ViewController: BaseViewController {
         productCollectionPageView.setData(allProducts: appleProducts, animated: true)
         
         // Core Data 테스트
-//        makeTestCartData()
+        //        makeTestCartData()
         fetchCartData()
     }
     
@@ -97,7 +113,7 @@ final class ViewController: BaseViewController {
             $0.bottom.equalToSuperview()
         }
     }
-
+    
     @objc private func showDetailModal() {
         let detailModalVC = DetailModalViewController()
         if let sheet = detailModalVC.sheetPresentationController {
@@ -127,11 +143,11 @@ final class ViewController: BaseViewController {
         )
         
         // TODO: - 아래 코드 Detail, Pay 모달 뷰 컨트롤러의 viewWillDisappear에 추가
-//        NotificationCenter.default.post(
-//            name: NSNotification.Name("ModalDismissNC"),
-//            object: nil,
-//            userInfo: nil
-//        )
+        //        NotificationCenter.default.post(
+        //            name: NSNotification.Name("ModalDismissNC"),
+        //            object: nil,
+        //            userInfo: nil
+        //        )
     }
     
     // MARK: - Test Methods
