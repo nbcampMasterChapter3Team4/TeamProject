@@ -12,35 +12,16 @@ import Then
 
 class PayModalViewController: BaseViewController {
 
-    // 임시데이터
-    private struct ShoppingItemModel {
-        let image: UIImage
-        let title: String
-        let description: String
-        let price: String
-        let count: Int
-    }
+    // MARK: - Properties
 
-    // 임시데이터
-    private var shoppingItemViews: [ShoppingItemView] = {
-        let sampleItems: [ShoppingItemModel] = [
-            ShoppingItemModel(image: UIImage(), title: "iPad Air", description: "최첨단 기술이 구현하는 궁극의 iPad 경험.", price: "1900000", count: 1),
-            ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: "1200000", count: 1),
-            ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: "650000", count: 1)
-        ]
-
-        return sampleItems.map { item in
-            let view = ShoppingItemView()
-            view.configure(item.image, item.title, item.description, item.price, item.count)
-            return view
-        }
-    }()
-
+    private var cartModels: [IECartModel] = []
+    private var shoppingItems: [ShoppingItemModel] = []
+    private var shoppingItemViews: [ShoppingItemView] = []
 
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
-    
+
     private let popButton = UIButton().then {
         $0.setImage(
             UITraitCollection.current.userInterfaceStyle == .light ?
@@ -59,18 +40,31 @@ class PayModalViewController: BaseViewController {
         $0.distribution = .equalSpacing
     }
 
-    private let bottomButtonView = CustomBottomButton()
+    private let bottomButtonView = CustomBottomButton().then {
+        $0.configure("₩0", "결제하기")
+    }
 
-    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
     private let emptyStateView = ShoppingItemEmptyView()
+
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setBottomButton()
         setAddTarget()
+        cartModels = CoreDataManager.fetchData()
+        updateViewDidLoad()
         configureShoppingItems()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ModalDismissNC"),
+            object: nil,
+            userInfo: nil
+        )
+    }
+    
     // 화면 모드 변환 탐지
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -78,11 +72,13 @@ class PayModalViewController: BaseViewController {
         // 이전과 현재 모드가 다를 때만 이미지 갱신
         if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
             popButton.setImage(traitCollection.userInterfaceStyle == .light ?
-                ImageLiterals.iCon.close_button_lightMode_ic :
-                ImageLiterals.iCon.close_button_darkMode_ic
+                ImageLiterals.iCon.close_button_lightMode_ic:
+                    ImageLiterals.iCon.close_button_darkMode_ic
                 , for: .normal)
         }
     }
+
+    // MARK: - Style Helper
 
     override func setStyles() {
         view.backgroundColor = UIColor { traitCollection in
@@ -93,6 +89,8 @@ class PayModalViewController: BaseViewController {
             }
         }
     }
+
+    // MARK: - Layout Helper
 
     override func setLayout() {
         view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView, emptyStateView)
@@ -143,12 +141,6 @@ class PayModalViewController: BaseViewController {
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
 
-    
-    // TODO: 수정해야함. 가격 부분을 CoreData에서 받아온걸 계산해서 넣어야함.
-    func setBottomButton() {
-        bottomButtonView.configure("₩190,000", "결제하기")
-    }
-
     private func configureShoppingItems() {
         for itemView in shoppingItemViews {
             itemView.snp.makeConstraints {
@@ -163,19 +155,65 @@ class PayModalViewController: BaseViewController {
         updateEmptyStateView()
     }
 
+    // MARK: - Update Methods
+
+    private func updateViewDidLoad() {
+        updateShoppingItems()
+        updateShoppingItemViews()
+        updatePredictPrice()
+    }
+
+    // MARK: - Update EmptyView Method
+
     private func updateEmptyStateView() {
         emptyStateView.isHidden = !shoppingItemViews.isEmpty
         scrollView.isHidden = shoppingItemViews.isEmpty
         deleteButton.isHidden = shoppingItemViews.isEmpty
     }
 
+    // MARK: - Update About ShoppintgItems Method
+
+    private func updateShoppingItems() {
+        shoppingItems = cartModels.compactMap { cartModel in
+            if let dataIndex = products.firstIndex(where: { $0.id == cartModel.productID }) {
+                let data = products[dataIndex]
+                return ShoppingItemModel(
+                    id: cartModel.id,
+                    image: ImageLiterals.Detail.image(for: data, color: cartModel.selectedColor),
+                    title: data.name,
+                    description: data.description,
+                    price: data.price,
+                    quantity: cartModel.cartQuantity,
+                    color: cartModel.selectedColor
+                )
+            }
+            return nil
+        }
+    }
+
+    private func updateShoppingItemViews() {
+        shoppingItemViews = shoppingItems.map { item in
+            let view = ShoppingItemView()
+            view.configure(item.image, item.title, item.description, item.price, item.quantity)
+            return view
+        }
+    }
+
+    /// 예상 금액 계산
+    private func updatePredictPrice() {
+        let price = shoppingItems.map { $0.quantity * $0.price }.reduce(0, +)
+        bottomButtonView.setPrice("₩\(price.formattedPrice)")
+    }
+
+
 
     // MARK: - RemoveItem Methods
 
-    private func removeItemView(at index: Int) {
+    private func removeItemView(at index: Int, from id: UUID) {
         let itemView = shoppingItemViews[index]
         stackView.removeArrangedSubview(itemView)
         itemView.removeFromSuperview()
+        shoppingItems.remove(at: index)
         shoppingItemViews.remove(at: index)
         updateEmptyStateView()
     }
@@ -185,22 +223,29 @@ class PayModalViewController: BaseViewController {
             stackView.removeArrangedSubview(itemView)
             itemView.removeFromSuperview()
         }
+        shoppingItems.removeAll()
         shoppingItemViews.removeAll()
         updateEmptyStateView()
     }
 
     // MARK: - Alert Methods
 
-    private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
+    private func alertForZeroItem(to titleLabel: String, for index: Int, from id: UUID, stepper: UIStepper) {
         let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForZeroItem 확인 버튼 눌림")
-            self.removeItemView(at: index)
+            self.shoppingItems[index].quantity = 0
+            self.removeItemView(at: index, from: id)
+
+            self.updatePredictPrice()
+
+            CoreDataManager.deleteData(id: id)
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
             print("alertForZeroItem 취소 버튼 눌림")
             stepper.value = 1
-            self.shoppingItemViews[index].getItemCountLabel().text = "1"
+            self.shoppingItems[index].quantity = 1
+            self.shoppingItemViews[index].getItemCountLabel().text = "수량: 1개"
         }
 
         showAlert(
@@ -215,7 +260,8 @@ class PayModalViewController: BaseViewController {
         let okAction = makeAlertAction(title: "확인") { _ in
             print("alertForOverItem 확인 버튼 눌림")
             stepper.value = 10
-            self.shoppingItemViews[index].getItemCountLabel().text = "10"
+            self.shoppingItems[index].quantity = 10
+            self.shoppingItemViews[index].getItemCountLabel().text = "수량: 10개"
         }
 
         showAlert(
@@ -225,11 +271,8 @@ class PayModalViewController: BaseViewController {
         )
     }
 
-
-
     // MARK: - @objc Methods
 
-    // TODO: 계산식 들어가야함.
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
         guard let index = shoppingItemViews.firstIndex(where: {
@@ -237,18 +280,21 @@ class PayModalViewController: BaseViewController {
         }) else { return }
 
         let itemView = shoppingItemViews[index]
+        let cartModelID = shoppingItems[index].id
         let currentValue = Int(sender.value)
 
         if currentValue == .zero {
             if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
-                alertForZeroItem(to: currentItemTitleLabel, for: index, stepper: sender)
+                alertForZeroItem(to: currentItemTitleLabel, for: index, from: cartModelID, stepper: sender)
             }
         } else if currentValue > 10 {
             alertForOverItem(for: index, stepper: sender)
         } else {
-            itemView.getItemCountLabel().text = "\(currentValue)"
+            itemView.getItemCountLabel().text = "수량: \(currentValue)개"
+            CoreDataManager.updateQuantityData(cartModelID, currentValue)
+            shoppingItems[index].quantity = currentValue
         }
-
+        updatePredictPrice()
     }
 
 
@@ -264,7 +310,8 @@ class PayModalViewController: BaseViewController {
         let okAction = makeAlertAction(title: "확인", style: .default) { _ in
             print("alertForDeleteAllItems 확인 버튼 눌림")
             self.removeAllItems()
-            self.updateEmptyStateView()
+            self.updatePredictPrice()
+            CoreDataManager.deleteAllData()
         }
 
         let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
