@@ -14,32 +14,26 @@ final class ViewController: BaseViewController {
         
     // MARK: - UI Components
     
-    private let segmentedControl = UISegmentedControl().then {
-        $0.backgroundColor = UIColor { traitCollection in
-            if traitCollection.userInterfaceStyle == .light {
-                return .gray80
-            } else {
-                return .gray600
+    private let segmentedControl = UISegmentedControl(
+        items: IECategory.allCases.map { $0.title }).then {
+            $0.backgroundColor = UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .light {
+                    return .gray80
+                } else {
+                    return .gray600
+                }
             }
+            $0.setTitleTextAttributes(
+                [.foregroundColor:
+                    UIColor { traitCollection in
+                        if traitCollection.userInterfaceStyle == .light {
+                            return .black100
+                        } else {
+                            return .white200
+                        }
+                    }], for: .normal)
+            $0.selectedSegmentIndex = 0
         }
-        
-        $0.insertSegment(withTitle: "All", at: 0, animated: true)
-        $0.insertSegment(withTitle: "iPhone", at: 1, animated: true)
-        $0.insertSegment(withTitle: "Mac", at: 2, animated: true)
-        $0.insertSegment(withTitle: "iPad", at: 3, animated: true)
-        $0.insertSegment(withTitle: "ACC", at: 4, animated: true)
-        $0.selectedSegmentIndex = 0
-        
-        $0.setTitleTextAttributes(
-            [.foregroundColor:
-                UIColor { traitCollection in
-                    if traitCollection.userInterfaceStyle == .light {
-                        return .black100
-                    } else {
-                        return .white200
-                    }
-                }], for: .normal)
-    }
     
     private let productCollectionPageView = ProductCollectionPageView()
     
@@ -132,6 +126,7 @@ final class ViewController: BaseViewController {
         let testCartData = [iPhone, mac, iPad, acc]
         
         for (i, data) in testCartData.enumerated() {
+            // 임시로 첫번째 컬러 선택
             guard let selectedColor = data.colors.first else { continue }
             let test = IECartModel(
                 id: UUID(),
