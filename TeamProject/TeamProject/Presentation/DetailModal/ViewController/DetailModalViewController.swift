@@ -111,6 +111,12 @@ extension DetailModalViewController: DetailModalViewDelegate {
         CoreDataManager.saveData(needToSaveData)
 
         let shoppingCart = CoreDataManager.fetchData()
-        print(shoppingCart)
+        /// 저장 효과 주기 위해 잠시 딜레이 추가
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.dismiss(animated: true) {
+                print("DetailModalView 닫힘, \(shoppingCart)")
+            }
+        }
+        
     }
 }
