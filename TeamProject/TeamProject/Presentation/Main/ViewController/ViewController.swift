@@ -43,6 +43,9 @@ final class ViewController: BaseViewController {
     
     // MARK: - Properties
     
+    /// 상품 데이터
+    private var appleProducts = products
+    
     /// 장바구니
     private var shoppingCart = [IECartModel]()
     
@@ -53,7 +56,7 @@ final class ViewController: BaseViewController {
         setAddTarget()
         setNotificationCenter()
         
-        productCollectionPageView.setData(allProducts: products, animated: true)
+        productCollectionPageView.setData(allProducts: appleProducts, animated: true)
         
         // Core Data 테스트
 //        makeTestCartData()
@@ -135,10 +138,10 @@ final class ViewController: BaseViewController {
     
     /// 테스트 장바구니 데이터 생성
     private func makeTestCartData() {
-        let iPhone = products.filter { $0.category == .iPhone }.first!
-        let mac = products.filter { $0.category == .mac }.first!
-        let iPad = products.filter { $0.category == .iPad }.first!
-        let acc = products.filter { $0.category == .acc }.first!
+        let iPhone = appleProducts.filter { $0.category == .iPhone }.first!
+        let mac = appleProducts.filter { $0.category == .mac }.first!
+        let iPad = appleProducts.filter { $0.category == .iPad }.first!
+        let acc = appleProducts.filter { $0.category == .acc }.first!
         let testCartData = [iPhone, mac, iPad, acc]
         
         for (i, data) in testCartData.enumerated() {
@@ -160,7 +163,7 @@ final class ViewController: BaseViewController {
         print(shoppingCart)
         
         var price = 0
-        shoppingCart.forEach { price += products[$0.productID].price }
+        shoppingCart.forEach { price += appleProducts[$0.productID].price }
         bottomButtonView.setPrice("₩\(String(price).formattedPrice)")
         bottomButtonView.getRightButton().setTitle("장바구니(\(shoppingCart.count))", for: .normal)
     }
@@ -169,27 +172,11 @@ final class ViewController: BaseViewController {
     
     @objc
     private func didChangeValue(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            productCollectionPageView.setData(allProducts: products, animated: false)
-        case 1:
-            productCollectionPageView.setData(
-                allProducts: products.filter { $0.category == .iPhone }, animated: false
-            )
-        case 2:
-            productCollectionPageView.setData(
-                allProducts: products.filter { $0.category == .mac }, animated: false
-            )
-        case 3:
-            productCollectionPageView.setData(
-                allProducts: products.filter { $0.category == .iPad }, animated: false
-            )
-        case 4:
-            productCollectionPageView.setData(
-                allProducts: products.filter { $0.category == .acc }, animated: false
-            )
-        default:
-            productCollectionPageView.setData(allProducts: products, animated: false)
+        if sender.selectedSegmentIndex == 0 {
+            productCollectionPageView.setData(allProducts: appleProducts, animated: false)
+        } else {
+            let showProducts = appleProducts.filter { $0.category == IECategory.allCases[sender.selectedSegmentIndex] }
+            productCollectionPageView.setData(allProducts: showProducts, animated: false)
         }
     }
     
