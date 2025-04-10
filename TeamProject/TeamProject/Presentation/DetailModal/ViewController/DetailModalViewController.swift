@@ -39,6 +39,15 @@ class DetailModalViewController: BaseViewController {
         setRegister()
         setupColorsStackView()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(
+            name: NSNotification.Name("ModalDismissNC"),
+            object: nil,
+            userInfo: nil
+        )
+    }
 
     // MARK: - Layout Helper
 
@@ -64,7 +73,7 @@ class DetailModalViewController: BaseViewController {
         detailView.detailImageView.updateContent(with: matchDetailProductImage(with: detailData, selectedColor: selectedColor))
         detailView.detailColorsStackView.updateContent(with: detailData.colors)
         detailView.detailInfoView.updateContents(productName: detailData.name,
-                                                 productPrice: "\(detailData.price)",
+                                                 productPrice: detailData.price,
                                                  quantity: currentValue)
     }
 
@@ -111,6 +120,12 @@ extension DetailModalViewController: DetailModalViewDelegate {
         CoreDataManager.saveData(needToSaveData)
 
         let shoppingCart = CoreDataManager.fetchData()
-        print(shoppingCart)
+        /// 저장 효과 주기 위해 잠시 딜레이 추가
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.dismiss(animated: true) {
+                print("DetailModalView 닫힘, \(shoppingCart)")
+            }
+        }
+        
     }
 }

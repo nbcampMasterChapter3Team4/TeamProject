@@ -110,7 +110,7 @@ struct IEProduct: Hashable {
         case "MagSafeCase_StarFruit": return ImageLiterals.Detail.magSafeCase_StarFruit
         case "MagSafeCase_Tangerine": return ImageLiterals.Detail.magSafeCase_Tangerine
         case "StudioDisplay_Silver": return ImageLiterals.Detail.studioDisplay_Silver
-        case "StudioDisplayXDR_Silver": return ImageLiterals.Detail.studioDisplayXDR_Silver
+        case "ProDisplayXDR_Silver": return ImageLiterals.Detail.proDisplayXDR_Silver
 
         default: return nil
         }
