@@ -7,13 +7,10 @@
 
 import Foundation
 
-extension String {
+extension Int {
     var formattedPrice: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        if let number = Int(self) {
-            return formatter.string(from: NSNumber(value: number)) ?? self
-        }
-        return self
+        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
 }
