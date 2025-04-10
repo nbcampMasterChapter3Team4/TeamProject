@@ -48,6 +48,9 @@ class DetailColorsStackView: UIStackView {
 
             radioButton.getRadioButton().tag = index
 
+            if index == 0 {
+                radioButton.setSelected(true)
+            }
             radioButton.getRadioButton().addTarget(self, action: #selector(didTapRadio(_:)), for: .touchUpInside)
 
             addArrangedSubview(radioButton)

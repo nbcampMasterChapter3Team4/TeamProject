@@ -97,7 +97,7 @@ class DetailModalViewController: BaseViewController {
 
 extension DetailModalViewController: DetailInfoViewDelegate {
     func detailInfoViewDidTapMinus(_ detailInfoView: DetailInfoView) {
-        guard currentValue > 0 else { return }
+        guard currentValue > 1 else { return }
         currentValue -= 1
     }
 
