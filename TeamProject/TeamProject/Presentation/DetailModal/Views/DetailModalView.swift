@@ -4,7 +4,7 @@ import SnapKit
 import Then
 
 let mockUpData: IEProduct = IEProduct(
-    id: UUID(),
+    id: 0,
     name: "MacBook Air 13 및 15",
     imageName: "MacBookAir",
     price: 1590000,

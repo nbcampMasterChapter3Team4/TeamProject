@@ -67,12 +67,11 @@ class MiniItemCell: BaseCollectionViewCell {
     // MARK: - Methods
     
     func configure(title: String, image: UIImage?, price: Int) {
-        let numberFormatter = NumberFormatter.getNumberFormatter()
-        let priceStr = numberFormatter.string(for: price) ?? "1,550,000"
+        let priceStr = String(price)
         
         miniItemTitleLabel.text = title
         miniItemImageView.image = image
-        miniItemPriceLabel.text = "₩\(priceStr)부터"
+        miniItemPriceLabel.text = "₩\(priceStr.formattedPrice)부터"
         
         // miniItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결

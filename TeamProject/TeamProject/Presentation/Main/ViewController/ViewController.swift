@@ -64,8 +64,8 @@ class ViewController: BaseViewController {
         super.viewDidLoad()
         setAddTarget()
         
-        makeTestData()
-        productCollectionPageView.setData(products: combineAllProduct(), animated: true)
+//        makeTestData()
+//        productCollectionPageView.setData(products: combineAllProduct(), animated: true)
         
         // Core Data 테스트
 //        makeTestCartData()
@@ -130,81 +130,81 @@ class ViewController: BaseViewController {
     // MARK: - Test Methods
     
     /// 테스트 데이터 생성
-    private func makeTestData() {
-        for i in 0..<10 {
-            let iPhone = IEProduct(
-                id: i,
-                name: "iPhone 16 Pro",
-                imageName: "iPhone16Pro",
-                price: 1_550_000,
-                description: "궁극의 iPhone.",
-                color: .desertTitanium,
-                category: .iPhone
-            )
-            testIEProduct[.iPhone, default: []].append(iPhone)
-        }
-        for i in 10..<22 {
-            let mac = IEProduct(
-                id: i,
-                name: "iMac",
-                imageName: "iMac",
-                price: 1_990_000,
-                description: "창의적인 작업도 생산적 업무도 척척. 놀라운 올인원 데스크탑.",
-                color: .blue,
-                category: .mac
-            )
-            testIEProduct[.mac, default: []].append(mac)
-        }
-        for i in 22..<36 {
-            let iPad = IEProduct(
-                id: i,
-                name: "iPad Pro",
-                imageName: "iPadPro",
-                price: 1_599_000,
-                description: "최첨단 기술이 구현하는 궁극의 iPad 경험.",
-                color: .silver,
-                category: .iPad
-            )
-            testIEProduct[.iPad, default: []].append(iPad)
-        }
-        for i in 36..<52 {
-            let acc = IEProduct(
-                id: i,
-                name: "MagSafe형 iPhone 16 Pro 실리콘 케이스",
-                imageName: "MagSafeCase",
-                price: 69_000,
-                description: "",
-                color: .aquamarine,
-                category: .acc
-            )
-            testIEProduct[.acc, default: []].append(acc)
-        }
-    }
-    
-    /// 모든 제품 데이터 배열로 반환
-    private func combineAllProduct() -> [IEProduct] {
-        let allProduct = testIEProduct.flatMap { $0.value }
-        return allProduct.shuffled()
-    }
-    
-    /// 테스트 장바구니 데이터 생성
-    private func makeTestCartData() {
-        let iPhone = testIEProduct[.iPhone]!.first!
-        let mac = testIEProduct[.mac]!.first!
-        let iPad = testIEProduct[.iPad]!.first!
-        let acc = testIEProduct[.acc]!.first!
-        testCartData.append(contentsOf: [iPhone, mac, iPad, acc])
-        
-        for (i, data) in testCartData.enumerated() {
-            let test = IECartModel(
-                id: UUID(),
-                productID: data.id,
-                selectedColor: data.color,
-                cartQuantity: i + 1
-            )
-            CoreDataManager.saveData(test)
-        }
-    }
+//    private func makeTestData() {
+//        for i in 0..<10 {
+//            let iPhone = IEProduct(
+//                id: i,
+//                name: "iPhone 16 Pro",
+//                imageName: "iPhone16Pro",
+//                price: 1_550_000,
+//                description: "궁극의 iPhone.",
+//                color: .desertTitanium,
+//                category: .iPhone
+//            )
+//            testIEProduct[.iPhone, default: []].append(iPhone)
+//        }
+//        for i in 10..<22 {
+//            let mac = IEProduct(
+//                id: i,
+//                name: "iMac",
+//                imageName: "iMac",
+//                price: 1_990_000,
+//                description: "창의적인 작업도 생산적 업무도 척척. 놀라운 올인원 데스크탑.",
+//                color: .blue,
+//                category: .mac
+//            )
+//            testIEProduct[.mac, default: []].append(mac)
+//        }
+//        for i in 22..<36 {
+//            let iPad = IEProduct(
+//                id: i,
+//                name: "iPad Pro",
+//                imageName: "iPadPro",
+//                price: 1_599_000,
+//                description: "최첨단 기술이 구현하는 궁극의 iPad 경험.",
+//                color: .silver,
+//                category: .iPad
+//            )
+//            testIEProduct[.iPad, default: []].append(iPad)
+//        }
+//        for i in 36..<52 {
+//            let acc = IEProduct(
+//                id: i,
+//                name: "MagSafe형 iPhone 16 Pro 실리콘 케이스",
+//                imageName: "MagSafeCase",
+//                price: 69_000,
+//                description: "",
+//                color: .aquamarine,
+//                category: .acc
+//            )
+//            testIEProduct[.acc, default: []].append(acc)
+//        }
+//    }
+//    
+//    /// 모든 제품 데이터 배열로 반환
+//    private func combineAllProduct() -> [IEProduct] {
+//        let allProduct = testIEProduct.flatMap { $0.value }
+//        return allProduct.shuffled()
+//    }
+//    
+//    /// 테스트 장바구니 데이터 생성
+//    private func makeTestCartData() {
+//        let iPhone = testIEProduct[.iPhone]!.first!
+//        let mac = testIEProduct[.mac]!.first!
+//        let iPad = testIEProduct[.iPad]!.first!
+//        let acc = testIEProduct[.acc]!.first!
+//        testCartData.append(contentsOf: [iPhone, mac, iPad, acc])
+//        
+//        for (i, data) in testCartData.enumerated() {
+//            let test = IECartModel(
+//                id: UUID(),
+//                productID: data.id,
+//                selectedColor: data.color,
+//                cartQuantity: i + 1
+//            )
+//            CoreDataManager.saveData(test)
+//        }
+//    }
     
     /// 장바구니 데이터 불러오기
     private func fetchCartData() {
@@ -215,9 +215,8 @@ class ViewController: BaseViewController {
         shoppingCart.forEach {
             price += productDict[$0.productID]?.price ?? 0
         }
-        let numberFormatter = NumberFormatter.getNumberFormatter()
-        let priceStr = "₩\(numberFormatter.string(for: price) ?? "0")"
-        bottomButtonView.setPrice(priceStr)
+        let priceStr = String(price)
+        bottomButtonView.setPrice(priceStr.formattedPrice)
     }
     
     // MARK: - objc Methods
@@ -226,7 +225,8 @@ class ViewController: BaseViewController {
     private func didChangeValue(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            productCollectionPageView.setData(products: combineAllProduct(), animated: false)
+            print()
+//            productCollectionPageView.setData(products: combineAllProduct(), animated: false)
         case 1:
             productCollectionPageView.setData(products: testIEProduct[.iPhone] ?? [], animated: false)
         case 2:

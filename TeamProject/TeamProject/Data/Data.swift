@@ -9,7 +9,7 @@ import Foundation
 
 let products: [IEProduct] = [
     IEProduct(
-        id: UUID(),
+        id: 0,
         name: "MacBook Air 13 및 15",
         imageName: "MacBookAir",
         price: 1590000,
@@ -18,7 +18,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 1,
         name: "MacBook Pro 14 및 16",
         imageName: "MacBookPro",
         price: 2390000,
@@ -27,7 +27,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 2,
         name: "iMac",
         imageName: "iMac",
         price: 1990000,
@@ -36,7 +36,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 3,
         name: "Mac mini",
         imageName: "MacMini",
         price: 890000,
@@ -45,7 +45,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 4,
         name: "Mac Studio",
         imageName: "MacStudio",
         price: 3290000,
@@ -54,7 +54,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 5,
         name: "MacPro",
         imageName: "MacPro",
         price: 10490000,
@@ -63,7 +63,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 6,
         name: "Studio Display",
         imageName: "StudioDisplay",
         price: 2090000,
@@ -72,7 +72,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 7,
         name: "Pro Display XDR",
         imageName: "ProDisplayXDR",
         price: 6499000,
@@ -81,7 +81,7 @@ let products: [IEProduct] = [
         category: .mac
     ),
     IEProduct(
-        id: UUID(),
+        id: 8,
         name: "iPad Pro",
         imageName: "iPadPro",
         price: 1599000,
@@ -90,7 +90,7 @@ let products: [IEProduct] = [
         category: .iPad
     ),
     IEProduct(
-        id: UUID(),
+        id: 9,
         name: "iPad Air",
         imageName: "iPadAir",
         price: 949000,
@@ -99,7 +99,7 @@ let products: [IEProduct] = [
         category: .iPad
     ),
     IEProduct(
-        id: UUID(),
+        id: 10,
         name: "iPad",
         imageName: "iPad",
         price: 529000,
@@ -108,7 +108,7 @@ let products: [IEProduct] = [
         category: .iPad
     ),
     IEProduct(
-        id: UUID(),
+        id: 11,
         name: "iPad mini",
         imageName: "iPadMini",
         price: 749000,
@@ -117,7 +117,7 @@ let products: [IEProduct] = [
         category: .iPad
     ),
     IEProduct(
-        id: UUID(),
+        id: 12,
         name: "iPhone 16 Pro",
         imageName: "iPhone16Pro",
         price: 1550000,
@@ -126,7 +126,7 @@ let products: [IEProduct] = [
         category: .iPhone
     ),
     IEProduct(
-        id: UUID(),
+        id: 13,
         name: "iPhone 16",
         imageName: "iPhone16",
         price: 1250000,
@@ -135,7 +135,7 @@ let products: [IEProduct] = [
         category: .iPhone
     ),
     IEProduct(
-        id: UUID(),
+        id: 14,
         name: "iPhone 16e",
         imageName: "iPhone16e",
         price: 990000,
@@ -144,7 +144,7 @@ let products: [IEProduct] = [
         category: .iPhone
     ),
     IEProduct(
-        id: UUID(),
+        id: 15,
         name: "iPhone 15",
         imageName: "iPhone15",
         price: 1090000,
@@ -153,7 +153,7 @@ let products: [IEProduct] = [
         category: .iPhone
     ),
     IEProduct(
-        id: UUID(),
+        id: 16,
         name: "MagSafe형 iPhone 16 Pro 실리콘 케이스",
         imageName: "MagSafeCase",
         price: 69000,
@@ -162,7 +162,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 17,
         name: "AirPods Pro 2",
         imageName: "AirPodsPro2",
         price: 349000,
@@ -171,7 +171,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 18,
         name: "AirPods Max",
         imageName: "AirPodsMax",
         price: 769000,
@@ -180,7 +180,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 19,
         name: "Apple Pencil Pro",
         imageName: "ApplePencilPro",
         price: 195000,
@@ -189,7 +189,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 20,
         name: "Magic Trackpad",
         imageName: "MagicTrackpad",
         price: 169000,
@@ -198,7 +198,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 21,
         name: "Magic Mouse",
         imageName: "MagicMouse",
         price: 139000,
@@ -207,7 +207,7 @@ let products: [IEProduct] = [
         category: .acc
     ),
     IEProduct(
-        id: UUID(),
+        id: 22,
         name: "Magic Keyboard",
         imageName: "MagicKeyboard",
         price: 279000,

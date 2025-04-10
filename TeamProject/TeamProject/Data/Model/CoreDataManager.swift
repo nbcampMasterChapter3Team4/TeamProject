@@ -32,7 +32,7 @@ final class CoreDataManager {
         
         let object = IECart(entity: entity, insertInto: context)
         object.id = ieCartModel.id
-        object.productID = Int64(ieCartModel.productID)
+//        object.product = ieCartModel.productID
         object.selectedColor = ieCartModel.selectedColor.rawValue
         object.cartQuantity = Int64(ieCartModel.cartQuantity)
         

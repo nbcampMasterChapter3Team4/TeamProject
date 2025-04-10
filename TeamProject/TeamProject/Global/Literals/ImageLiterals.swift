@@ -112,6 +112,7 @@ enum ImageLiterals {
         static var close_button_lightMode_ic: UIImage { .load(name: "close_button_light_Mode_ic").withRenderingMode(.alwaysOriginal)}
         static var trash_black_ic: UIImage { .load(name: "trash_black_ic").withRenderingMode(.alwaysOriginal)}
         static var trash_white_ic: UIImage { .load(name: "trash_white_ic").withRenderingMode(.alwaysOriginal)}
+        static var apple_ic: UIImage { .load(name: "apple_ic").withRenderingMode(.alwaysOriginal)}
     }
 
 }

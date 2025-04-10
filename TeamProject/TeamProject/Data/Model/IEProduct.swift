@@ -8,7 +8,7 @@
 import UIKit
 
 struct IEProduct: Hashable {
-    let id: UUID
+    let id: Int
     let name: String
     var imageName: String
     var price: Int
