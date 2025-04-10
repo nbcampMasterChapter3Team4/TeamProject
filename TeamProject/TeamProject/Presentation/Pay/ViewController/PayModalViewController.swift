@@ -11,73 +11,255 @@ import SnapKit
 import Then
 
 class PayModalViewController: BaseViewController {
-    
+
+    // 임시데이터
+    private struct ShoppingItemModel {
+        let image: UIImage
+        let title: String
+        let description: String
+        let price: String
+        let count: Int
+    }
+
+    // 임시데이터
+    private var shoppingItemViews: [ShoppingItemView] = {
+        let sampleItems: [ShoppingItemModel] = [
+            ShoppingItemModel(image: UIImage(), title: "iPad Air", description: "최첨단 기술이 구현하는 궁극의 iPad 경험.", price: "1900000", count: 1),
+            ShoppingItemModel(image: UIImage(), title: "iPhone 15", description: "놀라운 성능과 카메라.", price: "1200000", count: 1),
+            ShoppingItemModel(image: UIImage(), title: "Apple Watch", description: "건강과 운동의 파트너.", price: "650000", count: 1)
+        ]
+
+        return sampleItems.map { item in
+            let view = ShoppingItemView()
+            view.configure(item.image, item.title, item.description, item.price, item.count)
+            return view
+        }
+    }()
+
+
     // MARK: - UI Components
 
     private let deleteButton = DeleteButton()
     private let popButton = UIButton().then {
-        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
+//        $0.setImage(ImageLiterals.iCon.close_button_lightMode_ic, for: .normal)
+        $0.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
     }
-    
-    private let testView = ShoppingItemView()
-    
+
+    private let scrollView = UIScrollView()
+
+    private let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 26
+        $0.alignment = .fill
+        $0.distribution = .equalSpacing
+    }
+
     private let bottomButtonView = CustomBottomButton()
     
+    // TODO: 따로 View로 생성하거나 이미지 추가로 넣는 방법 고려
+    private let emptyStateView = UILabel().then {
+        $0.text = "장바구니에 담은 상품이 없습니다."
+        $0.textAlignment = .center
+        $0.font = .fontGuide(.payModalEmptyLabel)
+        $0.textColor = .gray400
+        $0.isHidden = true
+    }
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setBottomButton()
         setAddTarget()
+        configureShoppingItems()
     }
-    
+
     override func setStyles() {
-        view.backgroundColor = .white200
+        view.backgroundColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .white200
+            } else {
+                return .gray900
+            }
+        }
     }
-    
+
     override func setLayout() {
-        view.addSubviews(deleteButton, popButton, testView, bottomButtonView)
-        
+        view.addSubviews(deleteButton, popButton, scrollView, bottomButtonView, emptyStateView)
+        scrollView.addSubview(stackView)
+
         deleteButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(50)
             $0.leading.equalToSuperview().offset(18)
             $0.height.equalTo(SizeLiterals.Screen.screenHeight * 25 / 874)
             $0.width.equalTo(SizeLiterals.Screen.screenWidth * 68 / 402)
         }
-        
+
         popButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.trailing.equalToSuperview().offset(-20)
             $0.height.width.equalTo(SizeLiterals.Screen.screenHeight * 30 / 874)
         }
-        
-        testView.snp.makeConstraints {
+
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(deleteButton.snp.bottom).offset(26)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(SizeLiterals.Screen.screenWidth * 366 / 402)
-            $0.height.equalTo(SizeLiterals.Screen.screenHeight * 99 / 874)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(bottomButtonView.snp.top)
         }
-        
+
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(18)
+            $0.width.equalTo(scrollView.snp.width).offset(-36)
+        }
+
+
         bottomButtonView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+        // TODO: 이미지 추가 후 조정필요
+        emptyStateView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
+        }
+
     }
-    
+
     // MARK: - Methods
-    
-    func setAddTarget() {
-        testView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
+
+    private func setAddTarget() {
+        deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
+
+        popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
     }
-    
+
     func setBottomButton() {
         bottomButtonView.configure("₩190,000", "결제하기")
     }
+
+    private func configureShoppingItems() {
+        for itemView in shoppingItemViews {
+            itemView.snp.makeConstraints {
+                $0.width.equalTo(SizeLiterals.Screen.screenWidth * 366 / 402)
+                $0.height.equalTo(SizeLiterals.Screen.screenHeight * 99 / 874)
+            }
+
+            itemView.getItemCountStepper().addTarget(self, action: #selector(stepperValueChanged), for: .valueChanged)
+
+            stackView.addArrangedSubview(itemView)
+        }
+        updateEmptyStateView()
+    }
     
-    
+    private func updateEmptyStateView() {
+        emptyStateView.isHidden = !shoppingItemViews.isEmpty
+        scrollView.isHidden = shoppingItemViews.isEmpty
+    }
+
+
+    // MARK: - RemoveItem Methods
+
+    private func removeItemView(at index: Int) {
+        let itemView = shoppingItemViews[index]
+        stackView.removeArrangedSubview(itemView)
+        itemView.removeFromSuperview()
+        shoppingItemViews.remove(at: index)
+        updateEmptyStateView()
+    }
+
+    private func removeAllItems() {
+        for itemView in shoppingItemViews {
+            stackView.removeArrangedSubview(itemView)
+            itemView.removeFromSuperview()
+        }
+        shoppingItemViews.removeAll()
+        updateEmptyStateView()
+    }
+
+    // MARK: - Alert Methods
+
+    private func alertForZeroItem(to titleLabel: String, for index: Int, stepper: UIStepper) {
+        let okAction = makeAlertAction(title: "확인", style: .default) { _ in
+            print("alertForZeroItem 확인 버튼 눌림")
+            self.removeItemView(at: index)
+        }
+
+        let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
+            print("alertForZeroItem 취소 버튼 눌림")
+            stepper.value = 1
+            self.shoppingItemViews[index].getItemCountLabel().text = "1"
+        }
+
+        showAlert(
+            title: "\(titleLabel)가 삭제됩니다.",
+            message: "장바구니에서 이 항목을 제거하시겠습니까?",
+            actions: [okAction, cancelAction]
+        )
+    }
+
+
+    private func alertForOverItem(for index: Int, stepper: UIStepper) {
+        let okAction = makeAlertAction(title: "확인") { _ in
+            print("alertForOverItem 확인 버튼 눌림")
+            stepper.value = 10
+            self.shoppingItemViews[index].getItemCountLabel().text = "10"
+        }
+
+        showAlert(
+            title: "상품을 추가할 수 없습니다.",
+            message: "상품당 담을 수 있는 수량은 10개입니다",
+            actions: [okAction]
+        )
+    }
+
+
+
     // MARK: - @objc Methods
-    
+
     @objc
     private func stepperValueChanged(_ sender: UIStepper) {
+        guard let index = shoppingItemViews.firstIndex(where: {
+            $0.getItemCountStepper() === sender
+        }) else { return }
+
+        let itemView = shoppingItemViews[index]
         let currentValue = Int(sender.value)
-        testView.getItemCountLabel().text = "\(currentValue)"
+
+        if currentValue == .zero {
+            if let currentItemTitleLabel = itemView.getItemTitleLabel().text {
+                alertForZeroItem(to: currentItemTitleLabel, for: index, stepper: sender)
+            }
+        } else if currentValue > 10 {
+            alertForOverItem(for: index, stepper: sender)
+        } else {
+            itemView.getItemCountLabel().text = "\(currentValue)"
+        }
+
+    }
+
+
+    @objc
+    private func popModal() {
+        dismiss(animated: true) {
+            print("모달 닫힘")
+        }
+    }
+
+    @objc
+    private func alertForDeleteAllItems() {
+        let okAction = makeAlertAction(title: "확인", style: .default) { _ in
+            print("alertForDeleteAllItems 확인 버튼 눌림")
+            self.removeAllItems()
+            self.updateEmptyStateView()
+        }
+
+        let cancelAction = makeAlertAction(title: "취소", style: .destructive) { _ in
+            print("alertForDeleteAllItems 취소 버튼 눌림")
+        }
+
+        showAlert(
+            title: "주문 내역을 모두 삭제하시겠습니까?",
+            message: nil,
+            actions: [okAction, cancelAction]
+        )
     }
 }
