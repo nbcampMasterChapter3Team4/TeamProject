@@ -124,7 +124,11 @@ final class ViewController: BaseViewController {
         )
         
         // TODO: - 아래 코드 Detail, Pay 모달 뷰 컨트롤러의 viewWillDisappear에 추가
-//        NotificationCenter.default.post(name: NSNotification.Name("ModalDismissNC"), object: nil, userInfo: nil)
+//        NotificationCenter.default.post(
+//            name: NSNotification.Name("ModalDismissNC"),
+//            object: nil,
+//            userInfo: nil
+//        )
     }
     
     // MARK: - Test Methods
