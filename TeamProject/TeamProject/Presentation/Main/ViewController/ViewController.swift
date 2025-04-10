@@ -68,7 +68,7 @@ class ViewController: BaseViewController {
 //        productCollectionPageView.setData(products: combineAllProduct(), animated: true)
         
         setProductDict()
-        productCollectionPageView.setData(products: products, animated: true)
+        productCollectionPageView.setData(allProducts: products, animated: true)
         
         // Core Data 테스트
 //        makeTestCartData()
@@ -220,11 +220,9 @@ class ViewController: BaseViewController {
         print(shoppingCart)
         
         var price = 0
-        shoppingCart.forEach {
-            price += productDict[$0.productID]?.price ?? 0
-        }
+        shoppingCart.forEach { price += productDict[$0.productID]?.price ?? 0 }
         let priceStr = String(price)
-        bottomButtonView.setPrice(priceStr.formattedPrice)
+        bottomButtonView.setPrice("₩\(priceStr.formattedPrice)")
     }
     
     // MARK: - objc Methods
@@ -233,25 +231,25 @@ class ViewController: BaseViewController {
     private func didChangeValue(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            productCollectionPageView.setData(products: products, animated: false)
+            productCollectionPageView.setData(allProducts: products, animated: false)
         case 1:
             productCollectionPageView.setData(
-                products: products.filter { $0.category == .iPhone }, animated: false
+                allProducts: products.filter { $0.category == .iPhone }, animated: false
             )
         case 2:
             productCollectionPageView.setData(
-                products: products.filter { $0.category == .mac }, animated: false
+                allProducts: products.filter { $0.category == .mac }, animated: false
             )
         case 3:
             productCollectionPageView.setData(
-                products: products.filter { $0.category == .iPad }, animated: false
+                allProducts: products.filter { $0.category == .iPad }, animated: false
             )
         case 4:
             productCollectionPageView.setData(
-                products: products.filter { $0.category == .acc }, animated: false
+                allProducts: products.filter { $0.category == .acc }, animated: false
             )
         default:
-            productCollectionPageView.setData(products: products, animated: false)
+            productCollectionPageView.setData(allProducts: products, animated: false)
         }
     }
     

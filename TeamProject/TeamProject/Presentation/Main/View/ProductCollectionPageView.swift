@@ -23,7 +23,7 @@ class ProductCollectionPageView: BaseView {
     
     // MARK: - Properties
     
-    private var products: [IEProduct] = []
+    private var sectionItems = [[IEProduct]]()
     
     private let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
     private let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
@@ -75,8 +75,18 @@ class ProductCollectionPageView: BaseView {
         pageControl.addTarget(self, action: #selector(didChangeValue(_:)), for: .valueChanged)
     }
     
-    func setData(products: [IEProduct], animated: Bool) {
-        self.products = products
+    func setData(allProducts: [IEProduct], animated: Bool) {
+        sectionItems.removeAll()
+        // 데이터 앞 5개 저장(첫 번째 페이지)
+        sectionItems.append(Array(allProducts.prefix(5)))
+        
+        let remainingProducts = Array(allProducts.dropFirst(5))
+        // 6개씩 나눠서 배열로 저장
+        let otherPageItems = stride(from: 0, to: remainingProducts.count, by: 6).map {
+            Array(remainingProducts[$0..<min($0 + 6, remainingProducts.count)])
+        }
+        sectionItems.append(contentsOf: otherPageItems)
+        
         reloadData(animated: animated)
         reloadPageControl()
     }
@@ -190,18 +200,7 @@ private extension ProductCollectionPageView {
     func reloadData(animated: Bool) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         
-        // 데이터 앞 5개 저장(첫 번째 페이지)
-        let firstPageItems = Array(products.prefix(5))
-        snapshot.appendSections([.page(pageCount)])
-        snapshot.appendItems(firstPageItems, toSection: .page(pageCount))
-        pageCount += 1
-        
-        let remainingProducts = Array(products.dropFirst(5))
-        // 6개씩 나눠서 배열로 저장
-        let otherPageItems = stride(from: 0, to: remainingProducts.count, by: 6).map {
-            Array(remainingProducts[$0..<min($0 + 6, remainingProducts.count)])
-        }
-        for items in otherPageItems {
+        for items in sectionItems {
             snapshot.appendSections([.page(pageCount)])
             snapshot.appendItems(items, toSection: .page(pageCount))
             pageCount += 1
@@ -222,7 +221,7 @@ private extension ProductCollectionPageView {
 
 extension ProductCollectionPageView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("\(indexPath) cell pressed.")
+        print(sectionItems[indexPath.section][indexPath.item])
     }
 }
 
