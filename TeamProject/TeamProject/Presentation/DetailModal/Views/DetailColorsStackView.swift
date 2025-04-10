@@ -9,20 +9,6 @@ class DetailColorsStackView: UIStackView {
 
     var colorSelectedHandler: ((IEColor) -> Void)?
     private var colors: [IEColor] = []
-    private lazy var viewName = self.className
-
-    // MARK: - Initializer
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setStyles()
-        setLayout()
-    }
-
-    override func removeFromSuperview() {
-        super.removeFromSuperview()
-        print("🧵 \(viewName) has been successfully Removed")
-    }
 
     /// View 의 Style 을 set 합니다.
     func setStyles() {
@@ -30,14 +16,6 @@ class DetailColorsStackView: UIStackView {
         self.spacing = 8
         self.alignment = .center
         self.distribution = .equalSpacing
-    }
-
-    // MARK: - Layout Helper
-    /// View 의 Layout 을 set 합니다.
-    func setLayout() {}
-
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Methods

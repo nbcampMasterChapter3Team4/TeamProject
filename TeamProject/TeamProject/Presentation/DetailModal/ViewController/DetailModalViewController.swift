@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Then
 
-class DetailModalViewController: UIViewController {
+class DetailModalViewController: BaseViewController {
 
     // MARK: - Properties
 
@@ -14,11 +14,18 @@ class DetailModalViewController: UIViewController {
         }
     }
 
+    private var currentValue: Int = 1 {
+        didSet {
+            updateInfoView()
+        }
+    }
+
     // MARK: - UI Components
 
     private lazy var viewControllerName = self.className
     private let detailView = DetailModalView()
     private let colorsStackView = DetailColorsStackView()
+    private let detailInfoView = DetailInfoView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,29 +39,26 @@ class DetailModalViewController: UIViewController {
         updateUI()
         setDelegates()
         setRegister()
+        updateInfoView()
         setupColorsStackView()
     }
 
-    /// View 의 Style 을 set 합니다.
-    func setStyles() {
-    }
-
     // MARK: - Layout Helper
-    /// View 의 Layout 을 set 합니다.
-    func setLayout() {
+
+    override func setLayout() {
         view.addSubviews(detailView)
 
         detailView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
-    
-    /// View 의 Delegate 을 set 합니다.
-    func setDelegates() {}
-    /// View 의 Register 를 set 합니다.
-    func setRegister() {}
 
     // MARK: - Methods
+
+    override func setDelegates() {
+        detailInfoView.delegate = self
+        detailView.delegate = self
+    }
 
     func updateUI() {
         guard let detailData = detailData, let selectedColor = selectedColor else {
@@ -72,12 +76,47 @@ class DetailModalViewController: UIViewController {
     private func setupColorsStackView() {
         let availableColors: [IEColor] = detailData?.colors ?? [.silver]
         detailView.detailColorsStackView.updateContent(with: availableColors)
+        detailView.detailColorsStackView.updateContent(with: availableColors)
         detailView.detailColorsStackView.colorSelectedHandler = { [weak self] newColor in
             self?.selectedColor = newColor
         }
     }
 
+    private func updateInfoView() {
+        detailInfoView.updateContents(productName: detailData?.name ?? "123",
+                                      productPrice: "\(detailData?.price ?? 0)",
+                                      quantity: currentValue)
+    }
+
     deinit {
         print("🧶 \(viewControllerName) is deinited")
+    }
+}
+
+extension DetailModalViewController: DetailInfoViewDelegate {
+    func detailInfoViewDidTapMinus(_ detailInfoView: DetailInfoView) {
+        guard currentValue > 0 else { return }
+        currentValue -= 1
+    }
+
+    func detailInfoViewDidTapPlus(_ detailInfoView: DetailInfoView) {
+        guard currentValue < 10 else { return }
+        currentValue += 1
+    }
+}
+
+extension DetailModalViewController: DetailModalViewDelegate {
+    func detailModalViewDidTapCart(_ detailModalView: DetailModalView) {
+        guard let product = detailData else { return }
+        let needToSaveData = IECartModel(
+            id: UUID(),
+            productID: product.id,
+            selectedColor: selectedColor ?? .aquamarine,
+            cartQuantity: currentValue
+        )
+        CoreDataManager.saveData(needToSaveData)
+
+        let shoppingCart = CoreDataManager.fetchData()
+        print(shoppingCart)
     }
 }
