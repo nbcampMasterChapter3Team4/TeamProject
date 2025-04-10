@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Then
 
-class DetailModalViewController: UIViewController {
+class DetailModalViewController: BaseViewController {
 
     // MARK: - Properties
 
@@ -35,13 +35,9 @@ class DetailModalViewController: UIViewController {
         setupColorsStackView()
     }
 
-    /// View 의 Style 을 set 합니다.
-    func setStyles() {
-    }
 
     // MARK: - Layout Helper
-    /// View 의 Layout 을 set 합니다.
-    func setLayout() {
+    override func setLayout() {
         view.addSubviews(detailView)
 
         detailView.snp.makeConstraints {
@@ -49,11 +45,6 @@ class DetailModalViewController: UIViewController {
         }
     }
     
-    /// View 의 Delegate 을 set 합니다.
-    func setDelegates() {}
-    /// View 의 Register 를 set 합니다.
-    func setRegister() {}
-
     // MARK: - Methods
 
     func updateUI() {

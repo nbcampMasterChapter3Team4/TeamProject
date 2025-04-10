@@ -13,8 +13,8 @@ let mockUpData: IEProduct = IEProduct(
     category: .mac
 )
 
-class DetailModalView: UIView {
-    
+class DetailModalView: BaseView {
+
     // MARK: - UI Components
 
     private lazy var viewName = self.className
@@ -35,14 +35,14 @@ class DetailModalView: UIView {
     }
 
     /// View의 Style을 set 합니다.
-    func setStyles() {
+    override func setStyles() {
         self.backgroundColor = .white200
     }
 
     // MARK: - Layout Helper
     /// View 의 Layout 을 set 합니다.
 
-    func setLayout() {
+    override func setLayout() {
         addSubviews(detailImageView, detailColorsStackView)
 
         detailImageView.snp.makeConstraints {

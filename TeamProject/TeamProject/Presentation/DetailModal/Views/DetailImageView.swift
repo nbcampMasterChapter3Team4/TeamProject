@@ -3,7 +3,7 @@ import UIKit
 import SnapKit
 import Then
 
-class DetailImageView: UIView {
+class DetailImageView: BaseView {
 
     private lazy var viewName = self.className
 
@@ -27,7 +27,7 @@ class DetailImageView: UIView {
     }
 
     /// View 의 Style 을 set 합니다.
-    func setStyles() {
+    override func setStyles() {
         backgroundColor = .gray100
         self.layer.cornerRadius = 10
     }
@@ -35,7 +35,7 @@ class DetailImageView: UIView {
     // MARK: - Layout Helper
     /// View 의 Layout 을 set 합니다.
 
-    func setLayout() {
+    override func setLayout() {
         addSubviews(productImageView)
 
         productImageView.snp.makeConstraints {
