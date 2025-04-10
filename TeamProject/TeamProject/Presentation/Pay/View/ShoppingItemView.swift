@@ -22,14 +22,27 @@ class ShoppingItemView: BaseView {
     private let itemTitleLabel = UILabel().then {
         $0.text = "iPad Air"
         $0.font = .fontGuide(.payModalItemTitle)
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
+            
     }
     
     private let itemDescriptionLabel = UILabel().then {
         $0.text = "최첨단 기술이 구현하는 궁극의 iPad 경험."
         $0.font = .fontGuide(.payModalItemDesc)
         $0.numberOfLines = 0
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
     }
     
     private let itemPriceLabel = UILabel().then {
@@ -39,13 +52,19 @@ class ShoppingItemView: BaseView {
     }
     
     private let itemCountLabel = UILabel().then {
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
         $0.font = .fontGuide(.payModalItemDesc)
         $0.text = "1"
     }
     private let itemCountStepper = UIStepper().then {
-        $0.minimumValue = 1
-        $0.maximumValue = 99
+        $0.minimumValue = 0
+        $0.maximumValue = 11
         $0.stepValue = 1
         $0.value = 1
     }
@@ -103,7 +122,7 @@ class ShoppingItemView: BaseView {
         itemImageView.image = image
         itemTitleLabel.text = title
         itemDescriptionLabel.text = description
-        itemPriceLabel.text = "₩\(price)" // 1,000,000 변환 작업 필요
+        itemPriceLabel.text = "₩\(price.formattedPrice)" // 1,000,000 변환 작업 필요
         itemCountLabel.text = "\(itemCount)"
     }
     
@@ -115,5 +134,9 @@ class ShoppingItemView: BaseView {
     /// PayModal VC에서 itemCountLabel을 접근하기 위함
     func getItemCountLabel() -> UILabel {
         return itemCountLabel
+    }
+    
+    func getItemTitleLabel() -> UILabel {
+        return itemTitleLabel
     }
 }

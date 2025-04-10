@@ -15,12 +15,22 @@ class DeleteButton: UIButton {
     // MARK: - UI Components
 
     private let deleteImage = UIImageView().then {
-        $0.image = ImageLiterals.iCon.trash_black_ic
+//        $0.image = ImageLiterals.iCon.trash_black_ic
+        // MARK: 테스트용
+        $0.image = UIImage(systemName: "trash")
+        $0.tintColor = .black000
+        
     }
 
     private let detailTextLabel = UILabel().then {
         $0.text = "전체 삭제"
-        $0.textColor = .black100
+        $0.textColor = UIColor { traitCollection in
+            if traitCollection.userInterfaceStyle == .light {
+                return .black100
+            } else {
+                return .white200
+            }
+        }
         $0.font = .fontGuide(.payModalDeleteLabel)
     }
     
