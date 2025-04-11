@@ -139,6 +139,8 @@ class PayModalViewController: BaseViewController {
         deleteButton.addTarget(self, action: #selector(alertForDeleteAllItems), for: .touchUpInside)
 
         popButton.addTarget(self, action: #selector(popModal), for: .touchUpInside)
+        
+        bottomButtonView.getRightButton().addTarget(self, action: #selector(tappedPayButton), for: .touchUpInside)
     }
 
     private func configureShoppingItems() {
@@ -311,5 +313,23 @@ class PayModalViewController: BaseViewController {
             message: nil,
             actions: [okAction, cancelAction]
         )
+    }
+    
+    @objc func tappedPayButton() {
+        if !cartModels.isEmpty {
+            CoreDataManager.deleteAllData()
+            removeAllItems()
+            updatePredictPrice()
+            
+            emptyStateView.snp.updateConstraints {
+                $0.top.equalToSuperview().offset(180)
+            }
+            emptyStateView.getTitleLabel().text = "저런! 너굴맨이 다 가져가버렸습니다!"
+            emptyStateView.getImageView().image = UIImage(named: "nergullman")
+            emptyStateView.getImageView().snp.updateConstraints {
+                $0.height.equalTo(SizeLiterals.Screen.screenHeight * 200 / 874)
+                $0.width.equalTo(SizeLiterals.Screen.screenWidth * 300 / 402)
+            }
+        }
     }
 }
