@@ -174,20 +174,8 @@ class PayModalViewController: BaseViewController {
     // MARK: - Update About ShoppintgItems Method
 
     private func updateShoppingItems() {
-        shoppingItems = cartModels.compactMap { cartModel in
-            if let dataIndex = products.firstIndex(where: { $0.id == cartModel.productID }) {
-                let data = products[dataIndex]
-                return ShoppingItemModel(
-                    id: cartModel.id,
-                    image: ImageLiterals.Detail.image(for: data, color: cartModel.selectedColor),
-                    title: data.name,
-                    description: data.description,
-                    price: data.price,
-                    quantity: cartModel.cartQuantity,
-                    color: cartModel.selectedColor
-                )
-            }
-            return nil
+        shoppingItems = cartModels.compactMap {
+            ShoppingItemModel(cartModel: $0, products: products)
         }
     }
 
