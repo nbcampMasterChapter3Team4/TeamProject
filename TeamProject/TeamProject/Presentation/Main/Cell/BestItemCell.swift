@@ -87,9 +87,7 @@ final class BestItemCell: BaseCollectionViewCell {
         // bestItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결
         bestItemImageView.snp.remakeConstraints {
-            let screenWidth = SizeLiterals.Screen.screenWidth
-            let screenHeight = SizeLiterals.Screen.screenHeight
-            let isSmallDevice = min(screenWidth, screenHeight) <= 375
+            let isSmallDevice = SizeLiterals.Screen.isSmallDevice
             
             let imageSize = bestItemImageView.image?.size
             if imageSize?.width ?? 0 >= imageSize?.height ?? 0 {

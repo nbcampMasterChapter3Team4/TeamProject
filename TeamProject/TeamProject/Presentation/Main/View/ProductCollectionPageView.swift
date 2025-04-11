@@ -226,15 +226,17 @@ extension ProductCollectionPageView: UICollectionViewDelegate {
         // 모달 뷰 컨트롤러 생성 및 데이터 전달
         let detailModalVC = DetailModalViewController()
         detailModalVC.detailData = selectedItem
-
+        
+        let isSmallDevice = SizeLiterals.Screen.isSmallDevice
         // 만약 현재 클래스가 UIViewController가 아닌 경우, 최상위 뷰 컨트롤러를 찾아 present() 호출
         if let parentVC = collectionView.findViewController() {
             if let sheet = detailModalVC.sheetPresentationController {
                 sheet.detents = [
                     .custom { context in
-                        return context.maximumDetentValue * 0.75
+                        return context.maximumDetentValue * (isSmallDevice ? 0.95 : 0.75)
                     }
                 ]
+                
                 sheet.prefersGrabberVisible = true
             }
             parentVC.present(detailModalVC, animated: true, completion: nil)

@@ -74,14 +74,12 @@ final class MiniItemCell: BaseCollectionViewCell {
         // miniItemImageView에 image가 반영되었을 때 레이아웃 설정
         // - 이미지가 작게 보이는 문제 해결
         miniItemImageView.snp.remakeConstraints {
-            let screenWidth = SizeLiterals.Screen.screenWidth
-            let screenHeight = SizeLiterals.Screen.screenHeight
-            let isSmallDevice = min(screenWidth, screenHeight) <= 375
+            let isSmallDevice = SizeLiterals.Screen.isSmallDevice
             
             let imageSize = miniItemImageView.image?.size
             if imageSize?.width ?? 0 >= imageSize?.height ?? 0 {
                 // 너비가 길면 너비 기준 높이 설정
-                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.6 : 0.65)
+                $0.width.equalToSuperview().multipliedBy(isSmallDevice ? 0.55 : 0.65)
                 $0.height.equalTo(miniItemImageView.snp.width).multipliedBy(1)
             } else {
                 // 높이가 길면 높이 기준 너비 설정
