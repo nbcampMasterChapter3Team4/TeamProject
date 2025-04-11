@@ -723,14 +723,18 @@ ex)
 <details>
 <summary> 서동환 </summary>
 <div markdown="1">
-
+	
+ - (기존) 메인 ViewController, 발표 자료, 발표
+ - (추가) 장바구니 CoreData 구현
 </div>
 </details>
 	
 <details>
 <summary> 이세준 </summary>
-<div markdown="1">
+<div markdown="1"> 
 
+ - (기존) UI 세부사항 정리, (ShoppingCartViewController → PayModalViewController)
+ - (추가) 발표 자료, 시연 영상
 </div>
 </details>
   
@@ -738,7 +742,7 @@ ex)
 <summary> 한서영 </summary>
 <div markdown="1">
 
-
+ - (기존) 피그마 UI 작업, 데이터 수집, Detail UI 및 Detail 기능 구현
 
 </div>
 </details>
@@ -746,7 +750,9 @@ ex)
 <details>
 <summary> 천성우 </summary>
 <div markdown="1">
-
+	
+ - (기존) 피그마 UI 작업, 라이브러리 및 UI 세팅, PayModalUI 구현, 플로우 차트 정리, PR 코드 리뷰, 프로젝트 초기 셋팅
+ - (추가) ReadMe
  
 
 </div>
@@ -758,7 +764,13 @@ ex)
 <details>
 <summary> 서동환 </summary>
 <div markdown="1">
+	
+## Git Conflict
 
+작업한 내용 develop 브랜치에 Merge하는 과정에서 Conflict 발생
+
+- 작업 중간에 .gitignore 반영 위해 캐시 삭제하는 과정에서 원인불명의 이유로 프로젝트 파일 삭제됨
+- ✅ 새로 브랜치를 만들어 작업한 내용을 옮기는 방법으로 해결
 
 </div>
 </details>
@@ -767,6 +779,15 @@ ex)
 <summary> 이세준 </summary>
 <div markdown="1">
 	
+배운점 
+
+- 색상, 폰트, 이미지 등 Literals를 초기 프로젝트 설정때 작성해서 작업을 할때 편하게 사용할수 있음을 배움
+- 그 중 Font에 관련해서 UIComponent 별로 사용될 텍스트들을 case로 분리하고 extension으로 size와 weight를 정의해 하나의 함수로 작성해서 사용하면 코드의 재사용성과 가독성이 높아지는 것을 확인함.
+
+트러블슈팅
+
+- 피그마 디자인과 실제 개발을 했을때 예상치 못한 데이터의 내용(텍스트 길이) 때문에 UI에 오류가 발생했습니다. → 기존 디자인에서 크게 벗어나지 않게 UI를 수정해서 개발했습니다.
+- 다크모드 지원을 Assets에 자동으로 변환해주는 기능을 사용하지 않고 직접 제어할 경우, `override func traitCollectionDidChange` 를 사용해서 제어가 가능한 점을 경험했습니다.	
 
 </div>
 </details>
@@ -774,7 +795,20 @@ ex)
 <details>
 <summary> 한서영 </summary>
 <div markdown="1">
+배운점
 
+- 모달띄우기와 관련된 컴포넌트들을 공부할 수 있었습니다.
+- 메서드의 기능 분리를 열심히 해야한다고 느꼈어요.
+
+트러블슈팅
+
+- didset을 사용하면서 특정 값이 업데이트 될 때 제가 맡은 페이지 전부를 다시 그리는 로직을 작성했었습니다. 그중에 색 버튼들은 업데이트 시점이 달라져야 했는데, 그 부분을 찾지 못해서 어려움을 겪었습니다.
+
+didSet의 함정
+
+- 색상 선택 라디오 버튼의 테두리 색이 선택된 항목에 따라 바뀌지 않음
+- didSet을 사용하여 특정 값이 업데이트 될때 뷰 전체를 다시 그리는 로직으로 인해 발생
+- ✅ breakpoint를 설정하며 문제 부분 확인 및 수정
 
 </div>
 </details>
@@ -783,8 +817,81 @@ ex)
 <details>
 <summary> 천성우 </summary>
 <div markdown="1">
+
+ **하드코딩 의존성 변경**
+
+UISegmentedControl의 카테고리 설정/변경 부분의 하드코딩 의존성 문제
+
+- 설정은 insertSegment를 반복해서 작성하여 모든 카테고리 반영
+- 변경은 selectedSegmentIndex의 모든 케이스를 하나하나 대응
+- ✅ 설정 부분을 UISegmentedControl을 생성 시 items 매개변수에 카테고리 enum.allCases.map을 통해 할당
+- ✅ 변경 부분도 카테고리 enum.allCases를 사용하는 방법으로 변경 (20줄 ➡️ 6줄)	
+
+기존 코드
+
+```swift
+private func didChangeValue(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            productCollectionPageView.setData(allProducts: products, animated: false)
+        case 1:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .iPhone }, animated: false
+            )
+        case 2:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .mac }, animated: false
+            )
+        case 3:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .iPad }, animated: false
+            )
+        case 4:
+            productCollectionPageView.setData(products: testIEProduct[.acc] ?? [], animated: false)
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .acc }, animated: false
+            )
+        default:
+            productCollectionPageView.setData(products: testIEProduct[.iPhone] ?? [], animated: false)
+            productCollectionPageView.setData(allProducts: products, animated: false)
+        }
+    }
+```
+
+- selectedSegmentIndex가 IECategory.allCases의 범위를 벗어나면 index out of range 에러 발생 가능
+- IECategory enum의 순서와 segment 순서가 항상 동기화 되어 유지보수성이 낮음
+
+개선
+
+```swift
+enum IECategory: CaseIterable {
+	case all, iPhone, mac, iPad, acc
+	...
 	
+}
 
+//
+@objc 
+private func didChangeValue(_ sender: UISegmentedControl) {
+    guard let selectedCategory = IECategory.allCases[safe: sender.selectedSegmentIndex] else { return }
+    
+    let filtered = selectedCategory == .all
+        ? products
+        : products.filter { $0.category == selectedCategory }
+    
+    productCollectionPageView.setData(allProducts: filtered, animated: false)
+}
 
+// extension
+// safe 배열 접근을 위한 extension
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+```
+
+- safe 서브스크립트로 안전하게 접근
+- enum과 UI 간 하드 코딩된 의존성을 IECategory.allCases를 기반으로 segment를 구성해 enum 변경시에도 자동으로 반영 가능하도록 구성
 </div>
 </details>
