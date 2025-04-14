@@ -72,6 +72,7 @@ final class ViewController: BaseViewController {
         setAddTarget()
         setNotificationCenter()
         
+        productCollectionPageView.collectionView.delegate = self
         productCollectionPageView.setData(allProducts: appleProducts, animated: true)
         
         // Core Data 테스트
@@ -128,13 +129,6 @@ final class ViewController: BaseViewController {
             name: NSNotification.Name("ModalDismissNC"),
             object: nil
         )
-        
-        // TODO: - 아래 코드 Detail, Pay 모달 뷰 컨트롤러의 viewWillDisappear에 추가
-        //        NotificationCenter.default.post(
-        //            name: NSNotification.Name("ModalDismissNC"),
-        //            object: nil,
-        //            userInfo: nil
-        //        )
     }
     
     // MARK: - Test Methods
@@ -200,5 +194,30 @@ final class ViewController: BaseViewController {
     @objc
     private func didDismissDetailNotification(_ notification: Notification) {
         fetchCartData()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedItem = productCollectionPageView.sectionItems[indexPath.section][indexPath.item]
+        print(selectedItem)
+
+        // 모달 뷰 컨트롤러 생성 및 데이터 전달
+        let detailModalVC = DetailModalViewController()
+        detailModalVC.detailData = selectedItem
+        
+        let isSmallDevice = SizeLiterals.Screen.isSmallDevice
+        if let sheet = detailModalVC.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    return context.maximumDetentValue * (isSmallDevice ? 0.95 : 0.75)
+                }
+            ]
+            
+            sheet.prefersGrabberVisible = true
+        }
+        present(detailModalVC, animated: true, completion: nil)
     }
 }
