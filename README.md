@@ -1,20 +1,20 @@
 
-# 킥보드가 뭐 ~ ? 포비의 킥보드를 빌려 안전하게 반납해요!, 킥보드가 뭐
-자신의 위치를 기반으로 등록 된 킥보드를 사용하고 반납이 가능하며 운영자는 킥보드를 등록할 수 있는 서비스
+# 간단한 사용으로 Apple 기기를 구매할 수 있는 서비스, 과수원 🍎
+원하는 iPhoen, iMac, iPad 등 Apple 제품을 살펴보고 구매할 수 있는 서비스 과수원
 
 <br><br>
-## 🛴 과수원 iOS 🛴
-<img src="https://github.com/user-attachments/assets/e3d53e12-5685-430e-8350-428e5f89a166" width="200"> | <img src="https://github.com/user-attachments/assets/b820a610-96fe-4cd0-b1c6-122f229c58aa" width="200"> | <img src="https://github.com/user-attachments/assets/1969b83f-d201-4253-a19a-37d75f416d09" width="200"> | <img src="https://github.com/user-attachments/assets/1e65418d-bc56-47f7-a0f9-a85788a9a71c" width="200"> |
+## 🍎 과수원 iOS 🍎
+<img src="https://github.com/user-attachments/assets/852a2489-9e10-41c9-8761-b41d90998bcd" width="200"> | <img src="https://github.com/user-attachments/assets/98d353ac-52ee-414f-94f1-395c1de6c162" width="200"> | <img src="https://github.com/user-attachments/assets/96ab880b-8c7f-4072-9739-258258afbe9a" width="200"> | <img src="https://github.com/user-attachments/assets/0e354059-48c1-4191-ada7-05844b048221" width="200"> |
 :---------:|:----------:|:---------:|:---------:|
-서동환 | 백래훈 | 유영웅 | 천성우 |
-[SNMac](https://github.com/SNMac) | [RB](https://github.com/RaeBaek) | [Quarang](https://github.com/QuaRang1225) | [cjs1399](https://github.com/cjs1399) |
+서동환 | 이세준 | 한서영 | 천성우 |
+[SNMac](https://github.com/SNMac) | [Yimkeul](https://github.com/Yimkeul) | [seoyounghan](https://github.com/seoyounghan) | [cjs1399](https://github.com/cjs1399) |
 <br>
 
 
 
 ## 💻 Development Environment
 
-<img src ="https://img.shields.io/badge/Xcode-16.3-blue?logo=xcode" height="30"> <img src ="https://img.shields.io/badge/iOS-16.0-white.svg" height="30">
+<img src ="https://img.shields.io/badge/Xcode-16.2-blue?logo=xcode" height="30"> <img src ="https://img.shields.io/badge/iOS-16.0-white.svg" height="30">
 
 <br>
 
@@ -24,15 +24,11 @@
 :---------:|:----------:|:---------:
 SnapKit | UI Layout | SPM
 Then | UI 선언 | SPM
-RxSwift | 데이터 바인딩을 통한 비동기 데이터 흐름 처리 | SPM
-RxCoCoa | UI 컴포넌트(예: 버튼 rx.tap)의 반응형 이벤트 처리 | SPM
-NMapsMap | 네이버 지도 표시 | SPM
-NMapsGeometry | 네이버 지도 표시 | SPM
 
 <br>
 
 ## 📝 Code Convention
-https://jusung.github.io/Swift-Code-Convention/#1-코드-포매팅을 기본으로 코드컨벤션을 적용한다.
+
 <details>
 <summary> 네이밍 </summary>
 <div markdown="1">
@@ -491,6 +487,78 @@ func printProperty(property: Int) {
 // --> 오픈 소스라서!!
 // 그건 PR에서 하는걸로..?
 ```
+</div>
+</details>
+
+<details>
+<summary> 프로그래밍 권장사항 </summary>
+<div markdown="1">
+  Type Annotation 사용
+
+**좋은 예:**
+
+```swift
+let name: String = "철수"
+let height: Float = "10.0"
+```
+
+**나쁜 예:**
+
+```swift
+let name = "철수"
+let height = "10.0"
+```
+
+### **UICollectionViewDelegate, UICollectionViewDatsource 등 시스템 프로토콜**
+
+프로토콜을 적용할 때에는 extension을 만들어서 관련된 메서드를 모아둡니다.
+
+**좋은 예**:
+
+```swift
+final class MyViewController: UIViewController {
+  // ...
+}
+
+// MARK: - UITableViewDataSource
+
+extension MyViewController: UITableViewDataSource {
+  // ...
+}
+
+// MARK: - UITableViewDelegate
+
+extension MyViewController: UITableViewDelegate {
+  // ...
+}
+```
+
+**나쁜 예:**
+
+```swift
+final class MyViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+  // ...
+}
+```
+
+### `Then` 사용법
+
+```swift
+
+// MARK: - UI Components
+
+// 컴포넌트 선언 방식
+// 속성을 열거하면서 선언
+private let bookTitleLabel = UILabel().then {
+    $0.font = .systemFont(ofSize: 24, weight: .bold)
+    $0.textAlignment = .center
+    $0.numberOfLines = 0
+    $0.textColor = .black
+}
+```
+</div>
+</details>
+
 
 
 
@@ -589,31 +657,24 @@ func printProperty(property: Int) {
 <summary> Commit Convention & Template </summary>
 <div markdown="1">
 
-- ex) feat: #18 - DIContainer 및 UseCase 리팩토링 및 ViewModel 의존성 주입 개선
+- [Prefix] #이슈번호 - 작업내용
 ```
-- ype
-    
-    
-    | **타입** | **설명** |
-    | --- | --- |
-    | **feat** | 새로운 기능 추가 |
-    | **fix** | 버그 수정 |
-    | **refactor** | 코드 리팩터링 (기능 변화 없음) |
-    | **style** | 코드 포맷팅, 세미콜론 누락 등 (코드 변경 없음) |
-    | **docs** | 문서 수정 (README, 주석 등) |
-    | **test** | 테스트 코드 추가 또는 수정 |
-    | **chore** | 빌드 업무 수정, 패키지 매니저 수정 등 |
-    | **perf** | 성능 개선 관련 변경 |
-    | **ci** | CI/CD 설정 수정 |
-    | **build** | 빌드 관련 파일 수정 (예: Xcode 프로젝트 수정 등) |
-    | merge | 머지 |
-    | comment | 주석 추가/수정/삭제 |
-    - fix: 사용자 정보 수정 시 크래시 버그 해결
-    - docs: README에 API 명세 추가
-    - style: 들여쓰기 및 불필요한 개행 정리
-    - refactor: RideService 로직 분리 및 리팩토링
-    - test: Ride 모델 단위 테스트 추가
-    - chore: Podfile 업데이트 및 SnapKit 버전 고정
+[Prefix] 정리
+[Feature]: 새로운 기능 구현
+[Fix]: 버그, 오류 해결, 코드 수정
+[Design]: 오로지 화면. 레이아웃 조정
+[Merge]: 머지, 충돌해결
+[Refactor]: 프로덕션 코드 리팩토링
+[Comment]: 필요한 주석 추가 및 변경
+[Docs]: README나 WIKI 등의 문서 개정
+[Chore]:	빌드 태스트 업데이트, 패키지 매니저를 설정하는 경우(프로덕션 코드 변경 X)
+[Setting]: 프로젝트 초기 세팅 
+[Rename]:	파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우
+[Remove]:	파일을 삭제하는 작업만 수행한 경우
+
+
+ex)
+[Feat] #(이슈번호) - (해당 작업에 대한 내용)
 ```
 
 </details>
@@ -627,37 +688,31 @@ func printProperty(property: Int) {
 <div markdown="1">
 
 ```bash
-WhatIsKickboard/
-├── App
-│   ├── AppDelegate.swift
-│   ├── SceneDelegate.swift
-│   └── DI/
-├── Domain
-│   ├── Entity
-│   ├── RepositoryInterface
-│   └── UseCaseInterface
-├── Data
-│   ├── Model
-│   ├── RepositoryImpl
-│   ├── UseCaseImpl
-│   ├── Service
-│   └── CoreData
-├── Presentation
-│   ├── Shared/
-│   ├── Common/
-│   ├── UIModels/
-│   └── Views/
-│       └── Main/
-│           ├── Cell/
-│           ├── View/
-│           ├── ViewController/
-│           └── ViewModel/
-├── Resources/
-│   ├── Assets.xcassets
-│   ├── Fonts/
-│   ├── Extensions/
-│   └── Constants.swift
-└── Utils/
+├── 📁 Application
+│   ├── AppDelegate.swift
+│   ├── SceneDelegate.swift
+├── 📁 Data
+│   └── 📁 Model
+├── 📁 Global
+│   ├── 📁 Extension
+│   └── 📁 Literals
+│   └── 📁 Resource
+│       ├── Image.xcassets
+│       └── LaunchScreen.storyboard
+├── 📁 Presentation
+│   ├── 📁 Common
+│   │    └── 📁 UIComponent
+│   ├── 📁 DetailModal
+│   │   ├── 📁 ViewController
+│   │   └── 📁 Views
+│   ├── 📁 Main
+│   │   ├── 📁 Cell
+│   │   ├── 📁 View
+│   │   └── 📁 ViewController
+│   └── 📁 Pay
+│       ├── 📁 ViewController
+│       └── 📁 View
+└─ Info.plist
 ```
   
 </details>
@@ -669,23 +724,25 @@ WhatIsKickboard/
 <summary> 서동환 </summary>
 <div markdown="1">
 	
- - (기존) 디자인, 네이버 지도 API Manager, 메인화면, 사용자 위치 기반 주소 검색, 킥보드 상태 Model, 킥보드 등록
+ - (기존) 메인 ViewController, 발표 자료, 발표
+ - (추가) 장바구니 CoreData 구현
 </div>
 </details>
 	
 <details>
-<summary> 백래훈 </summary>
+<summary> 이세준 </summary>
 <div markdown="1"> 
 
- - (기존) 프로젝트 초기 환경 세팅, 마이페이지, 사용자 이용내역, 킥보드 등록 내역, 로그아웃 / 회원탈퇴, 탭바
+ - (기존) UI 세부사항 정리, (ShoppingCartViewController → PayModalViewController)
+ - (추가) 발표 자료, 시연 영상
 </div>
 </details>
   
 <details>
-<summary> 유영웅 </summary>
+<summary> 한서영 </summary>
 <div markdown="1">
 
- - (기존) 발표자료, 디자인, CoreData API Manager, RDB 설계 및 ERD 작성, 로그인/회원가입/이름 설정 및 스플래쉬 뷰
+ - (기존) 피그마 UI 작업, 데이터 수집, Detail UI 및 Detail 기능 구현
 
 </div>
 </details>
@@ -694,7 +751,7 @@ WhatIsKickboard/
 <summary> 천성우 </summary>
 <div markdown="1">
 	
- - (기존) 발표, 디자인, 킥보드 반납, 사진 촬영 및 이미지 사용, 킥보드 등록, CustomUI
+ - (기존) 피그마 UI 작업, 라이브러리 및 UI 세팅, PayModalUI 구현, 플로우 차트 정리, PR 코드 리뷰, 프로젝트 초기 셋팅
  - (추가) ReadMe
  
 
@@ -708,31 +765,133 @@ WhatIsKickboard/
 <summary> 서동환 </summary>
 <div markdown="1">
 	
+## Git Conflict
 
+작업한 내용 develop 브랜치에 Merge하는 과정에서 Conflict 발생
+
+- 작업 중간에 .gitignore 반영 위해 캐시 삭제하는 과정에서 원인불명의 이유로 프로젝트 파일 삭제됨
+- ✅ 새로 브랜치를 만들어 작업한 내용을 옮기는 방법으로 해결
 
 </div>
 </details>
 
 <details>
-<summary> 백래훈 </summary>
+<summary> 이세준 </summary>
 <div markdown="1">
+	
+배운점 
 
+- 색상, 폰트, 이미지 등 Literals를 초기 프로젝트 설정때 작성해서 작업을 할때 편하게 사용할수 있음을 배움
+- 그 중 Font에 관련해서 UIComponent 별로 사용될 텍스트들을 case로 분리하고 extension으로 size와 weight를 정의해 하나의 함수로 작성해서 사용하면 코드의 재사용성과 가독성이 높아지는 것을 확인함.
+
+트러블슈팅
+
+- 피그마 디자인과 실제 개발을 했을때 예상치 못한 데이터의 내용(텍스트 길이) 때문에 UI에 오류가 발생했습니다. → 기존 디자인에서 크게 벗어나지 않게 UI를 수정해서 개발했습니다.
+- 다크모드 지원을 Assets에 자동으로 변환해주는 기능을 사용하지 않고 직접 제어할 경우, `override func traitCollectionDidChange` 를 사용해서 제어가 가능한 점을 경험했습니다.	
+
+</div>
+</details>
+
+<details>
+<summary> 한서영 </summary>
+<div markdown="1">
+배운점
+
+- 모달띄우기와 관련된 컴포넌트들을 공부할 수 있었습니다.
+- 메서드의 기능 분리를 열심히 해야한다고 느꼈어요.
+
+트러블슈팅
+
+- didset을 사용하면서 특정 값이 업데이트 될 때 제가 맡은 페이지 전부를 다시 그리는 로직을 작성했었습니다. 그중에 색 버튼들은 업데이트 시점이 달라져야 했는데, 그 부분을 찾지 못해서 어려움을 겪었습니다.
+
+didSet의 함정
+
+- 색상 선택 라디오 버튼의 테두리 색이 선택된 항목에 따라 바뀌지 않음
+- didSet을 사용하여 특정 값이 업데이트 될때 뷰 전체를 다시 그리는 로직으로 인해 발생
+- ✅ breakpoint를 설정하며 문제 부분 확인 및 수정
 
 </div>
 </details>
 
   
 <details>
-
- <summary> 유영웅 </summary>
-<div markdown="1">
-
-
-</div>
-</details>
 <summary> 천성우 </summary>
 <div markdown="1">
 
+ **하드코딩 의존성 변경**
 
+UISegmentedControl의 카테고리 설정/변경 부분의 하드코딩 의존성 문제
+
+- 설정은 insertSegment를 반복해서 작성하여 모든 카테고리 반영
+- 변경은 selectedSegmentIndex의 모든 케이스를 하나하나 대응
+- ✅ 설정 부분을 UISegmentedControl을 생성 시 items 매개변수에 카테고리 enum.allCases.map을 통해 할당
+- ✅ 변경 부분도 카테고리 enum.allCases를 사용하는 방법으로 변경 (20줄 ➡️ 6줄)	
+
+기존 코드
+
+```swift
+private func didChangeValue(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            productCollectionPageView.setData(allProducts: products, animated: false)
+        case 1:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .iPhone }, animated: false
+            )
+        case 2:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .mac }, animated: false
+            )
+        case 3:
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .iPad }, animated: false
+            )
+        case 4:
+            productCollectionPageView.setData(products: testIEProduct[.acc] ?? [], animated: false)
+            productCollectionPageView.setData(
+                allProducts: products.filter { $0.category == .acc }, animated: false
+            )
+        default:
+            productCollectionPageView.setData(products: testIEProduct[.iPhone] ?? [], animated: false)
+            productCollectionPageView.setData(allProducts: products, animated: false)
+        }
+    }
+```
+
+- selectedSegmentIndex가 IECategory.allCases의 범위를 벗어나면 index out of range 에러 발생 가능
+- IECategory enum의 순서와 segment 순서가 항상 동기화 되어 유지보수성이 낮음
+
+개선
+
+```swift
+enum IECategory: CaseIterable {
+	case all, iPhone, mac, iPad, acc
+	...
+	
+}
+
+//
+@objc 
+private func didChangeValue(_ sender: UISegmentedControl) {
+    guard let selectedCategory = IECategory.allCases[safe: sender.selectedSegmentIndex] else { return }
+    
+    let filtered = selectedCategory == .all
+        ? products
+        : products.filter { $0.category == selectedCategory }
+    
+    productCollectionPageView.setData(allProducts: filtered, animated: false)
+}
+
+// extension
+// safe 배열 접근을 위한 extension
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+```
+
+- safe 서브스크립트로 안전하게 접근
+- enum과 UI 간 하드 코딩된 의존성을 IECategory.allCases를 기반으로 segment를 구성해 enum 변경시에도 자동으로 반영 가능하도록 구성
 </div>
 </details>
