@@ -59,8 +59,10 @@ final class ViewController: BaseViewController {
     
     // MARK: - Properties
     
-    /// 상품 데이터
-    private var appleProducts = products
+    /// 상품 데이터[id: IEProduct]
+    private var appleProducts = [Int: IEProduct]()
+    /// id순으로 정렬된 상품 데이터
+    private var sortedProducts = [IEProduct]()
     
     /// 장바구니
     private var shoppingCart = [IECartModel]()
@@ -72,7 +74,11 @@ final class ViewController: BaseViewController {
         setAddTarget()
         setNotificationCenter()
         
-        productCollectionPageView.setData(allProducts: appleProducts, animated: true)
+        products.forEach { appleProducts[$0.id] = $0 }
+        sortedProducts = appleProducts.values.sorted(by: { $0.id < $1.id })
+        
+        productCollectionPageView.collectionView.delegate = self
+        productCollectionPageView.setData(allProducts: sortedProducts, animated: true)
         
         // Core Data 테스트
         //        makeTestCartData()
@@ -128,23 +134,16 @@ final class ViewController: BaseViewController {
             name: NSNotification.Name("ModalDismissNC"),
             object: nil
         )
-        
-        // TODO: - 아래 코드 Detail, Pay 모달 뷰 컨트롤러의 viewWillDisappear에 추가
-        //        NotificationCenter.default.post(
-        //            name: NSNotification.Name("ModalDismissNC"),
-        //            object: nil,
-        //            userInfo: nil
-        //        )
     }
     
     // MARK: - Test Methods
     
     /// 테스트 장바구니 데이터 생성
     private func makeTestCartData() {
-        let iPhone = appleProducts.filter { $0.category == .iPhone }.first!
-        let mac = appleProducts.filter { $0.category == .mac }.first!
-        let iPad = appleProducts.filter { $0.category == .iPad }.first!
-        let acc = appleProducts.filter { $0.category == .acc }.first!
+        let iPhone = sortedProducts.filter { $0.category == .iPhone }.first!
+        let mac = sortedProducts.filter { $0.category == .mac }.first!
+        let iPad = sortedProducts.filter { $0.category == .iPad }.first!
+        let acc = sortedProducts.filter { $0.category == .acc }.first!
         let testCartData = [iPhone, mac, iPad, acc]
         
         for (i, data) in testCartData.enumerated() {
@@ -166,7 +165,10 @@ final class ViewController: BaseViewController {
         print(shoppingCart)
         
         var price = 0
-        shoppingCart.forEach { price += appleProducts[$0.productID].price * $0.cartQuantity}
+        shoppingCart.forEach {
+            guard let product = appleProducts[$0.productID] else { return }
+            price += product.price * $0.cartQuantity
+        }
         bottomButtonView.setPrice("₩\(price.formattedPrice)")
         bottomButtonView.getRightButton().setTitle("장바구니(\(shoppingCart.count))", for: .normal)
     }
@@ -176,10 +178,10 @@ final class ViewController: BaseViewController {
     @objc
     private func didChangeValue(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
-            productCollectionPageView.setData(allProducts: appleProducts, animated: false)
+            productCollectionPageView.setData(allProducts: sortedProducts, animated: false)
         } else {
-            let showProducts = appleProducts.filter { $0.category == IECategory.allCases[sender.selectedSegmentIndex] }
-            productCollectionPageView.setData(allProducts: showProducts, animated: false)
+            let filteredProducts = sortedProducts.filter { $0.category == IECategory.allCases[sender.selectedSegmentIndex] }
+            productCollectionPageView.setData(allProducts: filteredProducts, animated: false)
         }
     }
     
@@ -200,5 +202,30 @@ final class ViewController: BaseViewController {
     @objc
     private func didDismissDetailNotification(_ notification: Notification) {
         fetchCartData()
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedItem = productCollectionPageView.sectionItems[indexPath.section][indexPath.item]
+        print(selectedItem)
+
+        // 모달 뷰 컨트롤러 생성 및 데이터 전달
+        let detailModalVC = DetailModalViewController()
+        detailModalVC.detailData = selectedItem
+        
+        let isSmallDevice = SizeLiterals.Screen.isSmallDevice
+        if let sheet = detailModalVC.sheetPresentationController {
+            sheet.detents = [
+                .custom { context in
+                    return context.maximumDetentValue * (isSmallDevice ? 0.95 : 0.75)
+                }
+            ]
+            
+            sheet.prefersGrabberVisible = true
+        }
+        present(detailModalVC, animated: true, completion: nil)
     }
 }

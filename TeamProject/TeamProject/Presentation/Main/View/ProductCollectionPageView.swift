@@ -14,7 +14,7 @@ final class ProductCollectionPageView: BaseView {
 
     // MARK: - UI Components
 
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
 
     private let pageControl = UIPageControl().then {
         $0.currentPageIndicatorTintColor = UIColor.blue200
@@ -23,7 +23,7 @@ final class ProductCollectionPageView: BaseView {
 
     // MARK: - Properties
 
-    private var sectionItems = [[IEProduct]]()
+    var sectionItems = [[IEProduct]]()
 
     private let horizontalInsets = NSDirectionalEdgeInsets(top: 0, leading: 6.5, bottom: 0, trailing: 6.5)
     private let verticalInsets = NSDirectionalEdgeInsets(top: 6.5, leading: 0, bottom: 6.5, trailing: 0)
@@ -102,7 +102,6 @@ final class ProductCollectionPageView: BaseView {
 private extension ProductCollectionPageView {
     func setCollectionView() {
         collectionView.backgroundColor = .clear
-        collectionView.delegate = self
         collectionView.isPagingEnabled = true
         collectionView.showsHorizontalScrollIndicator = false
     }
@@ -212,34 +211,5 @@ private extension ProductCollectionPageView {
         pageControl.currentPage = 0
         let indexPath = IndexPath(item: 0, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-
-extension ProductCollectionPageView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(sectionItems[indexPath.section][indexPath.item])
-
-        let selectedItem = sectionItems[indexPath.section][indexPath.item]
-
-        // 모달 뷰 컨트롤러 생성 및 데이터 전달
-        let detailModalVC = DetailModalViewController()
-        detailModalVC.detailData = selectedItem
-        
-        let isSmallDevice = SizeLiterals.Screen.isSmallDevice
-        // 만약 현재 클래스가 UIViewController가 아닌 경우, 최상위 뷰 컨트롤러를 찾아 present() 호출
-        if let parentVC = collectionView.findViewController() {
-            if let sheet = detailModalVC.sheetPresentationController {
-                sheet.detents = [
-                    .custom { context in
-                        return context.maximumDetentValue * (isSmallDevice ? 0.95 : 0.75)
-                    }
-                ]
-                
-                sheet.prefersGrabberVisible = true
-            }
-            parentVC.present(detailModalVC, animated: true, completion: nil)
-        }
     }
 }
