@@ -50,4 +50,12 @@ class ShoppingItemEmptyView: BaseView {
             $0.centerX.equalToSuperview()
         }
     }
+    
+    func getTitleLabel() -> UILabel {
+        return titleLabel
+    }
+    
+    func getImageView() -> UIImageView {
+        return appleLogoImageView
+    }
 }
